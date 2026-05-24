@@ -9,7 +9,7 @@ import {
   getRgbColor,
   mixRgbColor,
 } from "./color.js";
-import { PantyPreview } from "./PantyPreview.jsx";
+import { PantyPreview, PantyResultImage } from "./PantyPreview.jsx";
 
 const defaultColor = { red: 255, green: 255, blue: 255 };
 const fixedPrompt = "彼女の色を当ててね";
@@ -69,6 +69,7 @@ function ColorGuessGame({ game, backToMenu, players }) {
       })
       .sort((a, b) => a.distance - b.distance);
   }, [answers, parentColor]);
+  const isResult = phase === "result";
 
   function resetInputColor() {
     setColor(defaultColor);
@@ -85,13 +86,7 @@ function ColorGuessGame({ game, backToMenu, players }) {
     if (now - lastHeartAtRef.current < 150) return;
     lastHeartAtRef.current = now;
 
-    const heart = {
-      id: `${now}-${Math.random().toString(16).slice(2)}`,
-      drift: `${Math.round(Math.random() * 44 - 22)}px`,
-      left: `${Math.round(Math.random() * 34 + 33)}%`,
-      rotate: `${Math.round(Math.random() * 24 - 12)}deg`,
-      scale: (Math.random() * 0.28 + 0.92).toFixed(2),
-    };
+    const heart = createFloatingHeart(now);
 
     setHearts((current) => [...current.slice(-5), heart]);
     window.setTimeout(() => {
@@ -139,8 +134,10 @@ function ColorGuessGame({ game, backToMenu, players }) {
   return (
     <GameShell
       game={game}
-      headingClassName="color-game-head"
-      lead={phase.includes("input") ? null : round.prompt}
+      headingClassName={`color-game-head ${isResult ? "result-game-head" : ""}`}
+      headingLabel={isResult ? null : undefined}
+      headingTitle={isResult ? "結果発表" : undefined}
+      lead={phase.includes("input") || isResult ? null : round.prompt}
       onBack={backToMenu}
       screenClassName="color-game-screen"
       showHeading={!phase.includes("input")}
@@ -301,30 +298,68 @@ function HandoffScreen({ actionLabel, eyebrow, onAction, primary, secondary }) {
 
 function ResultScreen({ onNextRound, parent, parentColor, ranking }) {
   const winner = ranking[0];
+  const [parentHearts, setParentHearts] = useState([]);
+  const [parentPreviewVariant, setParentPreviewVariant] = useState("shadow");
+  const parentPreviewBackground = usePreviewBackground(parentColor);
   const resultCopy = useMemo(() => createResultCopy(parent, winner), [parent, winner]);
+
+  function spawnParentHeart() {
+    const heart = createFloatingHeart(Date.now());
+
+    setParentHearts((current) => [...current.slice(-5), heart]);
+    window.setTimeout(() => {
+      setParentHearts((current) => current.filter((item) => item.id !== heart.id));
+    }, 1200);
+  }
 
   return (
     <section className="result-screen">
       <div className="result-hero">
         <p className="label">Winner</p>
-        <h2>{winner ? getPlayerCallName(winner.player) : "結果なし"}</h2>
+        <h2>{winner ? winner.player.name : "結果なし"}</h2>
         <p>{resultCopy}</p>
       </div>
 
-      <div className="result-color-row">
-        <span className="result-color-swatch" style={{ background: getHexColor(parentColor) }} />
-        <div>
-          <p className="label">Parent Color</p>
-          <p>親（{getPlayerCallName(parent)}）の色</p>
+      <div
+        className="result-parent-card"
+        style={{
+          "--panty-bg-base": parentPreviewBackground.base,
+          "--panty-bg-deep": parentPreviewBackground.deep,
+          "--panty-bg-glow": parentPreviewBackground.glow,
+        }}
+      >
+        <div className="result-parent-meta">
+          <span className="result-rank">親</span>
+          <button
+            className="result-player-name result-parent-name-button"
+            type="button"
+            onClick={() => setParentPreviewVariant((current) => (
+              current === "skin" ? "shadow" : "skin"
+            ))}
+          >
+            {parent.name}
+          </button>
+          <span className="result-hex">{getHexColor(parentColor)}</span>
         </div>
+        <PantyResultImage
+          background={parentPreviewBackground}
+          color={getHexColor(parentColor)}
+          hearts={parentHearts}
+          onClick={spawnParentHeart}
+          variant={parentPreviewVariant}
+        />
       </div>
 
       <div className="result-list">
         {ranking.map((answer, index) => (
-          <div className="result-row" key={answer.player.id}>
+          <div
+            className={`result-row result-answer-row ${getResultToneClass(answer.color)}`}
+            key={answer.player.id}
+            style={{ "--answer-color": getHexColor(answer.color) }}
+          >
             <span className="result-rank">{index + 1}</span>
-            <span className="result-color-swatch" style={{ background: getHexColor(answer.color) }} />
-            <span className="result-player-name">{getPlayerCallName(answer.player)}</span>
+            <span className="result-player-name">{answer.player.name}</span>
+            <span className="result-hex">{getHexColor(answer.color)}</span>
             <span className="result-score">{answer.score}点</span>
           </div>
         ))}
@@ -342,6 +377,16 @@ function ResultScreen({ onNextRound, parent, parentColor, ranking }) {
   );
 }
 
+function createFloatingHeart(now) {
+  return {
+    id: `${now}-${Math.random().toString(16).slice(2)}`,
+    drift: `${Math.round(Math.random() * 44 - 22)}px`,
+    left: `${Math.round(Math.random() * 34 + 33)}%`,
+    rotate: `${Math.round(Math.random() * 24 - 12)}deg`,
+    scale: (Math.random() * 0.28 + 0.92).toFixed(2),
+  };
+}
+
 function createResultCopy(parent, winner) {
   if (!winner) {
     return "今回は結果がありません。";
@@ -356,6 +401,12 @@ function createResultCopy(parent, winner) {
     score: winner.score,
     winnerName: getPlayerCallName(winner.player),
   });
+}
+
+function getResultToneClass(color) {
+  const brightness = (color.red * 299 + color.green * 587 + color.blue * 114) / 1000;
+
+  return brightness > 150 ? "result-answer-row-light" : "result-answer-row-dark";
 }
 
 function createRound(players) {
