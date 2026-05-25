@@ -49,7 +49,7 @@ export function PlayerSetup({ onComplete, pendingGameId, players, setPlayers }) 
     <section className="setup-screen" aria-labelledby="setup-title">
       <div className="setup-hero">
         <p className="label">Tonight&apos;s Players</p>
-        <h1 id="setup-title">まずは参加者</h1>
+        <h1 id="setup-title">今夜の顔ぶれ</h1>
         <p className="party-lead">
           名前はあとからでも大丈夫。一台を回す順番だけ、ここで軽く作ります。
         </p>

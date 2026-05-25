@@ -23,7 +23,7 @@ const pairRules = [
 export const kinkMatchGame = {
   id: "kink-match",
   number: "03",
-  title: "性癖マッチ",
+  title: "性癖マッチング",
   summary: "2択の回答から、噛み合うペアを1組ずつ発表する診断ゲーム。",
   players: "2人-",
   minutes: "8分",
