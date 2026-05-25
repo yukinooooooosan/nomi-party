@@ -1,6 +1,10 @@
 import {
+  assignPlayerColors,
   createPlayer,
   genderLabels,
+  getPlayerTextColor,
+  hasSavedRoster,
+  loadSavedRoster,
   maximumPlayers,
   minimumPlayers,
   nextGender,
@@ -9,29 +13,36 @@ import {
 
 export function PlayerSetup({ onComplete, pendingGameId, players, setPlayers }) {
   const canAddPlayer = players.length < maximumPlayers;
+  const canLoadSavedRoster = hasSavedRoster();
 
   function updatePlayer(playerId, patch) {
-    setPlayers((current) => current.map((player) => (
+    setPlayers((current) => assignPlayerColors(current.map((player) => (
       player.id === playerId ? { ...player, ...patch } : player
-    )));
+    ))));
   }
 
   function addPlayer() {
     if (!canAddPlayer) return;
-    setPlayers((current) => [...current, createPlayer(current.length)]);
+    setPlayers((current) => assignPlayerColors([...current, createPlayer(current.length)]));
   }
 
   function removePlayer(playerId) {
     setPlayers((current) => (
       current.length <= minimumPlayers
         ? current
-        : current.filter((player) => player.id !== playerId)
+        : assignPlayerColors(current.filter((player) => player.id !== playerId))
     ));
   }
 
   function startGame(event) {
     event.preventDefault();
     onComplete(normalizePlayers(players));
+  }
+
+  function loadPreviousRoster() {
+    const savedPlayers = loadSavedRoster();
+    if (!savedPlayers) return;
+    setPlayers(savedPlayers);
   }
 
   return (
@@ -47,7 +58,14 @@ export function PlayerSetup({ onComplete, pendingGameId, players, setPlayers }) 
       <form className="player-form" onSubmit={startGame}>
         <div className="player-list" aria-label="参加メンバー">
           {players.map((player, index) => (
-            <div className="player-row" key={player.id}>
+            <div
+              className="player-row"
+              key={player.id}
+              style={{
+                "--player-color": player.color,
+                "--player-text-color": getPlayerTextColor(player),
+              }}
+            >
               <span className="player-number">{String(index + 1).padStart(2, "0")}</span>
               <label className="player-name">
                 <span>Member</span>
@@ -93,6 +111,16 @@ export function PlayerSetup({ onComplete, pendingGameId, players, setPlayers }) 
         <button className="primary-button full-button" type="submit">
           {pendingGameId ? "このメンバーでゲームへ" : "このメンバーで始める"}
         </button>
+
+        {canLoadSavedRoster && (
+          <button
+            className="secondary-button full-button"
+            type="button"
+            onClick={loadPreviousRoster}
+          >
+            前回のメンバーを読み込む
+          </button>
+        )}
       </form>
     </section>
   );

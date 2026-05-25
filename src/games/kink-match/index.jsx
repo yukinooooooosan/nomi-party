@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { GameShell } from "../../components/GameShell.jsx";
+import { getPlayerColor, getPlayerTextColor } from "../../lib/playerColors.js";
 import {
   answerValues,
   buildGreedyMatches,
@@ -152,6 +153,7 @@ function KinkMatchGame({ game, backToMenu, players }) {
           onAction={() => setPhase("answer")}
           primary={getPlayerCallName(currentPlayer)}
           secondary="スマホを本人に渡してください。周りの人は画面を見ないでください。"
+          player={currentPlayer}
         />
       )}
 
@@ -171,6 +173,7 @@ function KinkMatchGame({ game, backToMenu, players }) {
           eyebrow="回答完了"
           onAction={advanceAfterAnswer}
           primary="保存しました"
+          player={nextAfterCurrent}
           secondary={nextAfterCurrent
             ? `回答内容は隠しました。画面を伏せて${getPlayerCallName(nextAfterCurrent)}に渡してください。`
             : "回答内容は隠しました。ここからは全員で見てOKです。"}
@@ -297,7 +300,13 @@ function AnswerScreen({ answers, onAnswer, onSubmit, player, questions }) {
   const canSubmit = answeredCount === questions.length;
 
   return (
-    <section className="kink-answer-screen">
+    <section
+      className="kink-answer-screen"
+      style={{
+        "--private-color": getPlayerColor(player),
+        "--private-text-color": getPlayerTextColor(player),
+      }}
+    >
       <div className="private-turn-card">
         <p className="label">Private Answer</p>
         <h2>{getPlayerCallName(player)}の回答</h2>
@@ -400,9 +409,15 @@ function LeftoverScreen({ leftovers, matchedCount, onMenu, onRestart }) {
   );
 }
 
-function HandoffScreen({ actionLabel, eyebrow, onAction, primary, secondary }) {
+function HandoffScreen({ actionLabel, eyebrow, onAction, player, primary, secondary }) {
   return (
-    <section className="handoff-card kink-card">
+    <section
+      className="handoff-card kink-card"
+      style={player ? {
+        "--handoff-color": getPlayerColor(player),
+        "--handoff-text-color": getPlayerTextColor(player),
+      } : undefined}
+    >
       <p className="label">{eyebrow}</p>
       <p className="handoff-name">{primary}</p>
       <p className="handoff-copy">{secondary}</p>

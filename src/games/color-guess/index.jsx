@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { ColorSlider } from "../../components/ColorSlider.jsx";
 import { GameShell } from "../../components/GameShell.jsx";
+import { getPlayerColor, getPlayerTextColor } from "../../lib/playerColors.js";
 import {
   getColorDistance,
   getColorScore,
@@ -148,6 +149,7 @@ function ColorGuessGame({ game, backToMenu, players }) {
           primary={`親（${getPlayerCallName(round.parent)}）`}
           secondary="スマホを親に渡してください。親だけが色を作ります。"
           actionLabel="親が色を作る"
+          player={round.parent}
           onAction={() => setPhase("parent-input")}
         />
       )}
@@ -174,6 +176,7 @@ function ColorGuessGame({ game, backToMenu, players }) {
           primary={getPlayerCallName(currentChild)}
           secondary="画面を伏せて渡してください。親が選びそうな色を当てます。"
           actionLabel="回答する"
+          player={currentChild}
           onAction={() => setPhase("child-input")}
         />
       )}
@@ -283,9 +286,15 @@ function ColorInput({
   );
 }
 
-function HandoffScreen({ actionLabel, eyebrow, onAction, primary, secondary }) {
+function HandoffScreen({ actionLabel, eyebrow, onAction, player, primary, secondary }) {
   return (
-    <section className="handoff-card">
+    <section
+      className="handoff-card"
+      style={player ? {
+        "--handoff-color": getPlayerColor(player),
+        "--handoff-text-color": getPlayerTextColor(player),
+      } : undefined}
+    >
       <p className="label">{eyebrow}</p>
       <p className="handoff-name">{primary}</p>
       <p className="handoff-copy">{secondary}</p>

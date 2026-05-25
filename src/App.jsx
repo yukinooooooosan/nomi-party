@@ -7,6 +7,7 @@ import {
   loadPlayers,
   normalizePlayers,
   playerStorageKey,
+  saveRoster,
   setupCompleteKey,
 } from "./lib/players.js";
 import { getHashValue, navigateTo } from "./lib/routing.js";
@@ -53,6 +54,7 @@ export function App() {
     setPlayers(nextPlayers);
     sessionStorage.setItem(playerStorageKey, JSON.stringify(nextPlayers));
     sessionStorage.setItem(setupCompleteKey, "true");
+    saveRoster(nextPlayers);
     navigateTo(pendingGameId || "menu");
   }
 

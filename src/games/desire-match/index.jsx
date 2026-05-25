@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { GameShell } from "../../components/GameShell.jsx";
+import { getPlayerColor, getPlayerTextColor } from "../../lib/playerColors.js";
 
 export const desireMatchGame = {
   id: "desire-match",
@@ -201,6 +202,7 @@ function DesireMatchGame({ game, backToMenu, players }) {
           eyebrow="次の入力者"
           onAction={() => setPhase("male-input")}
           primary={getPlayerCallName(currentMale)}
+          player={currentMale}
           secondary="スマホを本人に渡してください。周りの人は画面を見ないでください。"
         />
       )}
@@ -220,6 +222,7 @@ function DesireMatchGame({ game, backToMenu, players }) {
           eyebrow="入力完了"
           onAction={advanceAfterMale}
           primary="保存しました"
+          player={nextAfterMale}
           secondary={nextAfterMale
             ? `入力内容は隠しました。画面を伏せて${getPlayerCallName(nextAfterMale)}に渡してください。`
             : "入力内容は隠しました。"}
@@ -232,6 +235,7 @@ function DesireMatchGame({ game, backToMenu, players }) {
           eyebrow="次の投票者"
           onAction={() => setPhase("female-vote")}
           primary={getPlayerCallName(currentFemale)}
+          player={currentFemale}
           secondary="スマホを本人に渡してください。投票内容は本人だけが見てください。"
         />
       )}
@@ -252,6 +256,7 @@ function DesireMatchGame({ game, backToMenu, players }) {
           eyebrow="投票完了"
           onAction={advanceAfterFemale}
           primary="チェック内容を保存しました"
+          player={nextAfterFemale}
           secondary={nextAfterFemale
             ? `チェックは画面から消えました。画面を伏せて${getPlayerCallName(nextAfterFemale)}に渡してください。`
             : "チェックは画面から消えました。ここからは全員で見てOKです。"}
@@ -304,9 +309,15 @@ function DesireMatchGame({ game, backToMenu, players }) {
   );
 }
 
-function HandoffScreen({ actionLabel, eyebrow, onAction, primary, secondary }) {
+function HandoffScreen({ actionLabel, eyebrow, onAction, player, primary, secondary }) {
   return (
-    <section className="handoff-card desire-card">
+    <section
+      className="handoff-card desire-card"
+      style={player ? {
+        "--handoff-color": getPlayerColor(player),
+        "--handoff-text-color": getPlayerTextColor(player),
+      } : undefined}
+    >
       <p className="label">{eyebrow}</p>
       <p className="handoff-name">{primary}</p>
       <p className="handoff-copy">{secondary}</p>

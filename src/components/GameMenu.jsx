@@ -1,4 +1,5 @@
 import { genderLabels } from "../lib/players.js";
+import { getPlayerColor, getPlayerTextColor } from "../lib/playerColors.js";
 import { navigateTo } from "../lib/routing.js";
 
 function heatMarks(level) {
@@ -26,7 +27,13 @@ export function GameMenu({ games, players }) {
         </button>
         <div className="player-chips">
           {players.map((player) => (
-            <span key={player.id}>
+            <span
+              key={player.id}
+              style={{
+                "--player-color": getPlayerColor(player),
+                "--player-text-color": getPlayerTextColor(player),
+              }}
+            >
               {genderLabels[player.gender] || genderLabels.male} {player.name}
             </span>
           ))}
@@ -36,7 +43,7 @@ export function GameMenu({ games, players }) {
       <section className="menu-board" aria-labelledby="game-list-title">
         <div className="section-heading">
           <p className="label">Tonight&apos;s Menu</p>
-          <h2 id="game-list-title">今夜のゲームを選ぶ</h2>
+          <h2 id="game-list-title">今宵のゲームを選んでください</h2>
         </div>
 
         <div className="game-menu">
