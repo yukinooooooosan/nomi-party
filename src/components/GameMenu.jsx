@@ -10,10 +10,39 @@ export function GameMenu({ games, players }) {
   return (
     <>
       <header className="party-hero">
-        <p className="label">One Phone Party</p>
-        <h1 id="party-title">夜のまわしスマホ</h1>
+        <svg
+          className="hero-nightscape"
+          viewBox="0 0 260 180"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path
+            className="hero-moon-glow"
+            d="M220 4a48 48 0 1 0 0 96 23 48 0 1 1 0-96Z"
+          />
+          <path
+            className="hero-moon"
+            d="M220 4a48 48 0 1 0 0 96 23 48 0 1 1 0-96Z"
+          />
+          <g className="hero-buildings">
+            <rect x="12" y="96" width="38" height="84" />
+            <rect x="58" y="70" width="48" height="110" />
+            <rect x="118" y="100" width="42" height="80" />
+            <rect x="172" y="82" width="54" height="98" />
+          </g>
+          <g className="hero-windows">
+            <rect x="24" y="111" width="5" height="6" />
+            <rect x="72" y="88" width="5" height="6" />
+            <rect x="91" y="112" width="5" height="6" />
+            <rect x="131" y="119" width="5" height="6" />
+            <rect x="188" y="101" width="5" height="6" />
+            <rect x="210" y="128" width="5" height="6" />
+          </g>
+        </svg>
+        <p className="label">One Night Phone Party</p>
+        <h1 id="party-title">深夜の廻しスマホ</h1>
         <p className="party-lead">
-          一台を回すだけ。少し踏み込む、飲み会用パーティゲーム集。
+          一台を回すだけ。少し距離を縮めるオトナのパーティゲーム
         </p>
       </header>
 

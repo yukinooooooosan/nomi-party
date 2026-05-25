@@ -335,7 +335,7 @@ function AnswerScreen({ answers, onAnswer, onSubmit, player, questions }) {
       </div>
 
       <button
-        className="primary-button full-button"
+        className="primary-button full-button player-action-button"
         disabled={!canSubmit}
         type="button"
         onClick={onSubmit}
@@ -412,7 +412,7 @@ function LeftoverScreen({ leftovers, matchedCount, onMenu, onRestart }) {
 function HandoffScreen({ actionLabel, eyebrow, onAction, player, primary, secondary }) {
   return (
     <section
-      className="handoff-card kink-card"
+      className={`handoff-card kink-card ${player ? "player-handoff-card" : ""}`}
       style={player ? {
         "--handoff-color": getPlayerColor(player),
         "--handoff-text-color": getPlayerTextColor(player),

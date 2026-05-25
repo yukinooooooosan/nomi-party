@@ -164,6 +164,7 @@ function ColorGuessGame({ game, backToMenu, players }) {
           onSubmit={submitParentColor}
           previewBackground={previewBackground}
           previewVariant={previewVariant}
+          player={round.parent}
           selectedColor={selectedColor}
           setPreviewVariant={setPreviewVariant}
           title={`親（${getPlayerCallName(round.parent)}）の色`}
@@ -191,6 +192,7 @@ function ColorGuessGame({ game, backToMenu, players }) {
           onSubmit={submitChildColor}
           previewBackground={previewBackground}
           previewVariant={previewVariant}
+          player={currentChild}
           selectedColor={selectedColor}
           setPreviewVariant={setPreviewVariant}
           title={`${getPlayerCallName(currentChild)}の回答`}
@@ -228,13 +230,22 @@ function ColorInput({
   onSubmit,
   previewBackground,
   previewVariant,
+  player,
   selectedColor,
   setPreviewVariant,
   title,
 }) {
+  const playerStyle = player ? {
+    "--private-color": getPlayerColor(player),
+    "--private-text-color": getPlayerTextColor(player),
+  } : undefined;
+
   return (
     <>
-      <div className="private-turn-card">
+      <div
+        className="private-turn-card"
+        style={playerStyle}
+      >
         <p className="label">Private Turn</p>
         <h2>{title}</h2>
         <p>{note}</p>
@@ -277,8 +288,8 @@ function ColorInput({
         />
       </div>
 
-      <div className="game-controls single-control">
-        <button className="primary-button" type="button" onClick={onSubmit}>
+      <div className="game-controls single-control" style={playerStyle}>
+        <button className="primary-button player-action-button" type="button" onClick={onSubmit}>
           {actionLabel}
         </button>
       </div>
@@ -289,7 +300,7 @@ function ColorInput({
 function HandoffScreen({ actionLabel, eyebrow, onAction, player, primary, secondary }) {
   return (
     <section
-      className="handoff-card"
+      className={`handoff-card ${player ? "player-handoff-card" : ""}`}
       style={player ? {
         "--handoff-color": getPlayerColor(player),
         "--handoff-text-color": getPlayerTextColor(player),
@@ -322,7 +333,13 @@ function ResultScreen({ onNextRound, parent, parentColor, ranking }) {
   }
 
   return (
-    <section className="result-screen">
+    <section
+      className="result-screen"
+      style={winner ? {
+        "--result-winner-color": getPlayerColor(winner.player),
+        "--result-winner-text-color": getPlayerTextColor(winner.player),
+      } : undefined}
+    >
       <div className="result-hero">
         <p className="label">Winner</p>
         <h2>{winner ? winner.player.name : "結果なし"}</h2>
@@ -332,6 +349,7 @@ function ResultScreen({ onNextRound, parent, parentColor, ranking }) {
       <div
         className="result-parent-card"
         style={{
+          "--answer-color": getHexColor(parentColor),
           "--panty-bg-base": parentPreviewBackground.base,
           "--panty-bg-deep": parentPreviewBackground.deep,
           "--panty-bg-glow": parentPreviewBackground.glow,
@@ -348,7 +366,7 @@ function ResultScreen({ onNextRound, parent, parentColor, ranking }) {
           >
             {parent.name}
           </button>
-          <span className="result-hex">{getHexColor(parentColor)}</span>
+          <span className="result-hex result-answer-hex">{getHexColor(parentColor)}</span>
         </div>
         <PantyResultImage
           background={parentPreviewBackground}
@@ -362,20 +380,24 @@ function ResultScreen({ onNextRound, parent, parentColor, ranking }) {
       <div className="result-list">
         {ranking.map((answer, index) => (
           <div
-            className={`result-row result-answer-row ${getResultToneClass(answer.color)}`}
+            className="result-row result-answer-row"
             key={answer.player.id}
-            style={{ "--answer-color": getHexColor(answer.color) }}
+            style={{
+              "--answer-color": getHexColor(answer.color),
+              "--result-player-color": getPlayerColor(answer.player),
+              "--result-row-text": getPlayerTextColor(answer.player),
+            }}
           >
             <span className="result-rank">{index + 1}</span>
             <span className="result-player-name">{answer.player.name}</span>
-            <span className="result-hex">{getHexColor(answer.color)}</span>
+            <span className="result-hex result-answer-hex">{getHexColor(answer.color)}</span>
             <span className="result-score">{answer.score}点</span>
           </div>
         ))}
       </div>
 
       <div className="game-controls">
-        <button className="primary-button" type="button" onClick={onNextRound}>
+        <button className="secondary-button" type="button" onClick={onNextRound}>
           もう一回
         </button>
         <button className="secondary-button" type="button" onClick={() => window.location.hash = "menu"}>
@@ -410,12 +432,6 @@ function createResultCopy(parent, winner) {
     score: winner.score,
     winnerName: getPlayerCallName(winner.player),
   });
-}
-
-function getResultToneClass(color) {
-  const brightness = (color.red * 299 + color.green * 587 + color.blue * 114) / 1000;
-
-  return brightness > 150 ? "result-answer-row-light" : "result-answer-row-dark";
 }
 
 function createRound(players) {

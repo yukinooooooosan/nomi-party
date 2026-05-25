@@ -312,7 +312,7 @@ function DesireMatchGame({ game, backToMenu, players }) {
 function HandoffScreen({ actionLabel, eyebrow, onAction, player, primary, secondary }) {
   return (
     <section
-      className="handoff-card desire-card"
+      className={`handoff-card desire-card ${player ? "player-handoff-card" : ""}`}
       style={player ? {
         "--handoff-color": getPlayerColor(player),
         "--handoff-text-color": getPlayerTextColor(player),
@@ -343,9 +343,13 @@ function NoticeCard({ actionLabel, children, eyebrow, onAction, title }) {
 
 function PrivateInputScreen({ draft, onChange, onSubmit, player }) {
   const canSubmit = draft.trim().length > 0;
+  const playerStyle = {
+    "--private-color": getPlayerColor(player),
+    "--private-text-color": getPlayerTextColor(player),
+  };
 
   return (
-    <section className="desire-private-screen">
+    <section className="desire-private-screen" style={playerStyle}>
       <div className="private-turn-card">
         <p className="label">Private Turn</p>
         <h2>{getPlayerCallName(player)}の欲望</h2>
@@ -365,7 +369,7 @@ function PrivateInputScreen({ draft, onChange, onSubmit, player }) {
 
       <div className="game-controls single-control">
         <button
-          className="primary-button"
+          className="primary-button player-action-button"
           disabled={!canSubmit}
           type="button"
           onClick={onSubmit}
@@ -378,8 +382,13 @@ function PrivateInputScreen({ draft, onChange, onSubmit, player }) {
 }
 
 function VoteScreen({ onSubmit, onToggle, player, requests, selectedRequestIds }) {
+  const playerStyle = {
+    "--private-color": getPlayerColor(player),
+    "--private-text-color": getPlayerTextColor(player),
+  };
+
   return (
-    <section className="desire-private-screen">
+    <section className="desire-private-screen" style={playerStyle}>
       <div className="private-turn-card">
         <p className="label">Private Vote</p>
         <h2>{getPlayerCallName(player)}の投票</h2>
@@ -405,7 +414,7 @@ function VoteScreen({ onSubmit, onToggle, player, requests, selectedRequestIds }
       </div>
 
       <div className="game-controls single-control">
-        <button className="primary-button" type="button" onClick={onSubmit}>
+        <button className="primary-button player-action-button" type="button" onClick={onSubmit}>
           確定して隠す
         </button>
       </div>
@@ -461,11 +470,23 @@ function MatchResultScreen({ female, male, onNext, request }) {
         <span>欲望発表</span>
         <blockquote>{request.text}</blockquote>
       </div>
-      <div className={`desire-result-step desire-female-step ${revealedFemale ? "" : "desire-result-step-hidden"}`}>
+      <div
+        className={`desire-result-step desire-player-step desire-female-step ${revealedFemale ? "" : "desire-result-step-hidden"}`}
+        style={revealedFemale && female ? {
+          "--desire-result-color": getPlayerColor(female),
+          "--desire-result-text-color": getPlayerTextColor(female),
+        } : undefined}
+      >
         <span>これに応じてくれる女性</span>
         <strong>{revealedFemale ? (female ? getPlayerCallName(female) : "今回はいません") : "???"}</strong>
       </div>
-      <div className={`desire-result-step desire-owner-step ${revealedOwner ? "" : "desire-result-step-hidden"}`}>
+      <div
+        className={`desire-result-step desire-player-step desire-owner-step ${revealedOwner ? "" : "desire-result-step-hidden"}`}
+        style={revealedOwner && male ? {
+          "--desire-result-color": getPlayerColor(male),
+          "--desire-result-text-color": getPlayerTextColor(male),
+        } : undefined}
+      >
         <span>欲望主</span>
         <strong>{revealedOwner ? (male ? getPlayerCallName(male) : "不明") : "???"}</strong>
       </div>
