@@ -3,6 +3,7 @@ export function GameShell({
   game,
   headingClassName = "",
   headingLabel,
+  headingMeta,
   headingTitle,
   lead,
   onBack,
@@ -22,6 +23,7 @@ export function GameShell({
         <div className={`game-screen-head ${headingClassName}`}>
           {label && <p className="label">{label}</p>}
           <h1 id="active-game-title">{title}</h1>
+          {headingMeta && <p className="heading-meta">{headingMeta}</p>}
           {lead && <p>{lead}</p>}
         </div>
       )}

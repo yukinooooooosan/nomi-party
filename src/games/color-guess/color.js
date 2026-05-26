@@ -1,3 +1,8 @@
+import { differenceEuclidean } from "culori";
+
+const getOklabDistance = differenceEuclidean("oklab");
+const maxOklabDistance = 1;
+
 export function toHex(value) {
   return Number(value).toString(16).padStart(2, "0").toUpperCase();
 }
@@ -19,17 +24,11 @@ export function getRgbColor(color) {
 }
 
 export function getColorDistance(a, b) {
-  return Math.sqrt(
-    (a.red - b.red) ** 2
-    + (a.green - b.green) ** 2
-    + (a.blue - b.blue) ** 2,
-  );
+  return getOklabDistance(toCuloriRgb(a), toCuloriRgb(b));
 }
 
 export function getColorScore(distance) {
-  const maxDistance = Math.sqrt((255 ** 2) * 3);
-
-  return Math.max(0, Math.round((1 - distance / maxDistance) * 100));
+  return Math.max(0, Math.round((1 - distance / maxOklabDistance) * 100));
 }
 
 export function mixRgbColor(color, target, amount) {
@@ -41,5 +40,14 @@ export function mixRgbColor(color, target, amount) {
     red: mix(color.red, target.red),
     green: mix(color.green, target.green),
     blue: mix(color.blue, target.blue),
+  };
+}
+
+function toCuloriRgb(color) {
+  return {
+    mode: "rgb",
+    r: color.red / 255,
+    g: color.green / 255,
+    b: color.blue / 255,
   };
 }

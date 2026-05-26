@@ -635,6 +635,19 @@ button:focus-visible {
   font-size: clamp(3rem, 16vw, 5.6rem);
 }
 
+.heading-meta {
+  width: fit-content;
+  margin: 10px 0 8px;
+  padding: 5px 10px;
+  border: 1px solid rgba(247, 239, 226, 0.22);
+  border-radius: 999px;
+  background: rgba(247, 239, 226, 0.08);
+  color: var(--color-paper);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
 .game-screen-head p:last-child {
   margin-bottom: 0;
   color: var(--color-muted);

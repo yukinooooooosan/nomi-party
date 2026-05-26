@@ -5,6 +5,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "culori": "^4.0.2",
     "react": "latest",
     "react-aria-components": "^1.17.0",
     "react-dom": "latest"

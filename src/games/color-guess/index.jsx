@@ -137,6 +137,7 @@ function ColorGuessGame({ game, backToMenu, players }) {
       game={game}
       headingClassName={`color-game-head ${isResult ? "result-game-head" : ""}`}
       headingLabel={isResult ? null : undefined}
+      headingMeta={isResult ? null : "判定: OKLab距離"}
       headingTitle={isResult ? "結果発表" : undefined}
       lead={phase.includes("input") || isResult ? null : round.prompt}
       onBack={backToMenu}
