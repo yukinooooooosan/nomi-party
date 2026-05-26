@@ -277,6 +277,8 @@ h2 {
 }
 
 .player-row {
+  position: relative;
+  overflow: hidden;
   min-height: 76px;
   padding: 12px;
   display: grid;
@@ -292,6 +294,29 @@ h2 {
   box-shadow:
     inset 0 0 0 1px rgba(255, 248, 239, 0.05),
     0 10px 24px rgba(0, 0, 0, 0.22);
+}
+
+.player-row::before {
+  content: "";
+  position: absolute;
+  right: 100px;
+  top: 50%;
+  z-index: 0;
+  width: 52px;
+  aspect-ratio: 1;
+  background: #ff5f9d;
+  mask: url("./src/assets/kissmark.png") center / contain no-repeat;
+  -webkit-mask: url("./src/assets/kissmark.png") center / contain no-repeat;
+  filter: blur(0.2px) saturate(1.1);
+  mix-blend-mode: screen;
+  opacity: 0.22;
+  pointer-events: none;
+  transform: translateY(-50%) rotate(-12deg);
+}
+
+.player-row > * {
+  position: relative;
+  z-index: 1;
 }
 
 .player-number {
