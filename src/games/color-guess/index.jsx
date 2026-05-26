@@ -3,7 +3,9 @@ import { ColorSlider } from "../../components/ColorSlider.jsx";
 import { GameShell } from "../../components/GameShell.jsx";
 import { getPlayerColor, getPlayerTextColor } from "../../lib/playerColors.js";
 import {
+  colorDistanceMethods,
   getColorDistance,
+  getColorDistanceMethod,
   getColorScore,
   getComplementColor,
   getHexColor,
@@ -50,26 +52,28 @@ function ColorGuessGame({ game, backToMenu, players }) {
   const [parentColor, setParentColor] = useState(null);
   const [answers, setAnswers] = useState([]);
   const [childIndex, setChildIndex] = useState(0);
+  const [distanceMethodId, setDistanceMethodId] = useState("oklab");
   const lastHeartAtRef = useRef(0);
 
   const currentChild = round.children[childIndex];
   const selectedColor = useMemo(() => getHexColor(color), [color]);
   const previewBackground = usePreviewBackground(color);
+  const distanceMethod = getColorDistanceMethod(distanceMethodId);
   const ranking = useMemo(() => {
     if (!parentColor) return [];
 
     return answers
       .map((answer) => {
-        const distance = getColorDistance(parentColor, answer.color);
+        const distance = getColorDistance(parentColor, answer.color, distanceMethodId);
 
         return {
           ...answer,
           distance,
-          score: getColorScore(distance),
+          score: getColorScore(distance, distanceMethodId),
         };
       })
       .sort((a, b) => a.distance - b.distance);
-  }, [answers, parentColor]);
+  }, [answers, distanceMethodId, parentColor]);
   const isResult = phase === "result";
 
   function resetInputColor() {
@@ -132,12 +136,31 @@ function ColorGuessGame({ game, backToMenu, players }) {
     resetInputColor();
   }
 
+  function switchDistanceMethod() {
+    setDistanceMethodId((current) => {
+      const currentIndex = colorDistanceMethods.findIndex(
+        (method) => method.id === current,
+      );
+      const nextIndex = (currentIndex + 1) % colorDistanceMethods.length;
+
+      return colorDistanceMethods[nextIndex].id;
+    });
+  }
+
   return (
     <GameShell
       game={game}
       headingClassName={`color-game-head ${isResult ? "result-game-head" : ""}`}
       headingLabel={isResult ? null : undefined}
-      headingMeta={isResult ? null : "判定: OKLab距離"}
+      headingMeta={isResult ? null : (
+        <button
+          className="heading-meta-button"
+          type="button"
+          onClick={switchDistanceMethod}
+        >
+          判定: {distanceMethod.label}
+        </button>
+      )}
       headingTitle={isResult ? "結果発表" : undefined}
       lead={phase.includes("input") || isResult ? null : round.prompt}
       onBack={backToMenu}

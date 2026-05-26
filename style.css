@@ -638,6 +638,9 @@ button:focus-visible {
 .heading-meta {
   width: fit-content;
   margin: 10px 0 8px;
+}
+
+.heading-meta-button {
   padding: 5px 10px;
   border: 1px solid rgba(247, 239, 226, 0.22);
   border-radius: 999px;
@@ -646,6 +649,10 @@ button:focus-visible {
   font-size: 0.76rem;
   font-weight: 900;
   letter-spacing: 0.02em;
+}
+
+.heading-meta-button:active {
+  transform: translateY(1px);
 }
 
 .game-screen-head p:last-child {
