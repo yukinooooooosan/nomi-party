@@ -1736,21 +1736,6 @@ button:focus-visible {
   pointer-events: none;
 }
 
-.roulette-wheel::after {
-  content: "";
-  position: absolute;
-  inset: -12px;
-  z-index: -1;
-  border-radius: 50%;
-  background:
-    repeating-conic-gradient(from 12deg,
-      #6b3d20 0deg 9deg,
-      #8a542e 9deg 18deg,
-      #5a321b 18deg 27deg,
-      #9b653a 27deg 36deg);
-  pointer-events: none;
-}
-
 .roulette-name {
   position: absolute;
   top: 50%;
