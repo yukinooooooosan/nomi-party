@@ -46,13 +46,21 @@ export function PantyPreview({ background, color, hearts, onToggleVariant, varia
   );
 }
 
-export function PantyResultImage({ background, color, hearts, onClick, variant }) {
+export function PantyResultImage({
+  ariaLabel = "色の画像",
+  background,
+  className = "",
+  color,
+  hearts,
+  onClick,
+  variant,
+}) {
   const image = variant === "skin" ? pantySkinImage : pantyImage;
 
   return (
     <button
-      className="result-panty-image"
-      aria-label="親の色の画像"
+      className={`result-panty-image ${className}`.trim()}
+      aria-label={ariaLabel}
       onClick={onClick}
       type="button"
       style={{

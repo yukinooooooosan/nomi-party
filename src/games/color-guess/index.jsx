@@ -49,6 +49,7 @@ function ColorGuessGame({ game, backToMenu, players }) {
   const [color, setColor] = useState(defaultColor);
   const [hearts, setHearts] = useState([]);
   const [previewVariant, setPreviewVariant] = useState("shadow");
+  const [parentPreviewVariant, setParentPreviewVariant] = useState("shadow");
   const [parentColor, setParentColor] = useState(null);
   const [answers, setAnswers] = useState([]);
   const [childIndex, setChildIndex] = useState(0);
@@ -101,6 +102,7 @@ function ColorGuessGame({ game, backToMenu, players }) {
 
   function submitParentColor() {
     setParentColor(color);
+    setParentPreviewVariant(previewVariant);
     resetInputColor();
     setChildIndex(0);
     setPhase("child-handoff");
@@ -131,6 +133,7 @@ function ColorGuessGame({ game, backToMenu, players }) {
     setRound(createRound(players));
     setPhase("parent-handoff");
     setParentColor(null);
+    setParentPreviewVariant("shadow");
     setAnswers([]);
     setChildIndex(0);
     resetInputColor();
@@ -238,6 +241,7 @@ function ColorGuessGame({ game, backToMenu, players }) {
           onNextRound={startNextRound}
           parent={round.parent}
           parentColor={parentColor}
+          previewVariant={parentPreviewVariant}
           ranking={ranking}
         />
       )}
@@ -340,12 +344,18 @@ function HandoffScreen({ actionLabel, eyebrow, onAction, player, primary, second
   );
 }
 
-function ResultScreen({ onNextRound, parent, parentColor, ranking }) {
+function ResultScreen({ onNextRound, parent, parentColor, previewVariant, ranking }) {
   const winner = ranking[0];
   const [parentHearts, setParentHearts] = useState([]);
-  const [parentPreviewVariant, setParentPreviewVariant] = useState("shadow");
+  const [resultPreviewVariant, setResultPreviewVariant] = useState(previewVariant);
   const parentPreviewBackground = usePreviewBackground(parentColor);
   const resultCopy = useMemo(() => createResultCopy(parent, winner), [parent, winner]);
+
+  function toggleResultPreviewVariant() {
+    setResultPreviewVariant((current) => (
+      current === "skin" ? "shadow" : "skin"
+    ));
+  }
 
   function spawnParentHeart() {
     const heart = createFloatingHeart(Date.now());
@@ -377,6 +387,8 @@ function ResultScreen({ onNextRound, parent, parentColor, ranking }) {
           "--panty-bg-base": parentPreviewBackground.base,
           "--panty-bg-deep": parentPreviewBackground.deep,
           "--panty-bg-glow": parentPreviewBackground.glow,
+          "--result-player-color": getPlayerColor(parent),
+          "--result-player-text-color": getPlayerTextColor(parent),
         }}
       >
         <div className="result-parent-meta">
@@ -384,40 +396,59 @@ function ResultScreen({ onNextRound, parent, parentColor, ranking }) {
           <button
             className="result-player-name result-parent-name-button"
             type="button"
-            onClick={() => setParentPreviewVariant((current) => (
-              current === "skin" ? "shadow" : "skin"
-            ))}
+            onClick={toggleResultPreviewVariant}
           >
             {parent.name}
           </button>
           <span className="result-hex result-answer-hex">{getHexColor(parentColor)}</span>
         </div>
         <PantyResultImage
+          ariaLabel="親の色の画像"
           background={parentPreviewBackground}
           color={getHexColor(parentColor)}
           hearts={parentHearts}
           onClick={spawnParentHeart}
-          variant={parentPreviewVariant}
+          variant={resultPreviewVariant}
         />
       </div>
 
       <div className="result-list">
-        {ranking.map((answer, index) => (
-          <div
-            className="result-row result-answer-row"
-            key={answer.player.id}
-            style={{
-              "--answer-color": getHexColor(answer.color),
-              "--result-player-color": getPlayerColor(answer.player),
-              "--result-row-text": getPlayerTextColor(answer.player),
-            }}
-          >
-            <span className="result-rank">{index + 1}</span>
-            <span className="result-player-name">{answer.player.name}</span>
-            <span className="result-hex result-answer-hex">{getHexColor(answer.color)}</span>
-            <span className="result-score">{answer.score}点</span>
-          </div>
-        ))}
+        {ranking.map((answer, index) => {
+          const answerColor = getHexColor(answer.color);
+          const answerPreviewBackground = getPreviewBackground(answer.color);
+          const isWinner = index === 0;
+
+          return (
+            <article
+              className={`result-answer-card ${isWinner ? "is-winner" : "is-runner-up"}`}
+              key={answer.player.id}
+              style={{
+                "--answer-color": answerColor,
+                "--panty-bg-base": answerPreviewBackground.base,
+                "--panty-bg-deep": answerPreviewBackground.deep,
+                "--panty-bg-glow": answerPreviewBackground.glow,
+                "--result-player-color": getPlayerColor(answer.player),
+                "--result-player-text-color": getPlayerTextColor(answer.player),
+              }}
+            >
+              <div className="result-answer-card-meta">
+                <span className="result-rank">{index + 1}</span>
+                <span className="result-player-name">{answer.player.name}</span>
+                <span className="result-hex result-answer-hex">{answerColor}</span>
+                <span className="result-score">{answer.score}点</span>
+              </div>
+              <PantyResultImage
+                ariaLabel={`${answer.player.name}の回答色の画像`}
+                background={answerPreviewBackground}
+                className={isWinner ? "result-answer-image-winner" : "result-answer-image-strip"}
+                color={answerColor}
+                hearts={[]}
+                onClick={() => {}}
+                variant={resultPreviewVariant}
+              />
+            </article>
+          );
+        })}
       </div>
 
       <div className="game-controls">
@@ -476,11 +507,15 @@ function getPlayerCallName(player) {
 }
 
 function usePreviewBackground(color) {
-  const complementColor = useMemo(() => getComplementColor(color), [color]);
+  return useMemo(() => getPreviewBackground(color), [color]);
+}
 
-  return useMemo(() => ({
+function getPreviewBackground(color) {
+  const complementColor = getComplementColor(color);
+
+  return {
     glow: getRgbColor(mixRgbColor(complementColor, { red: 255, green: 248, blue: 239 }, 0.18)),
     deep: getRgbColor(mixRgbColor(complementColor, { red: 12, green: 8, blue: 8 }, 0.72)),
     base: getRgbColor(mixRgbColor(complementColor, { red: 12, green: 8, blue: 8 }, 0.86)),
-  }), [complementColor]);
+  };
 }

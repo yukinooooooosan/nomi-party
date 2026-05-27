@@ -288,7 +288,7 @@ h2 {
   border: 1px solid var(--color-line);
   border-radius: 8px;
   background:
-    linear-gradient(90deg, color-mix(in srgb, var(--player-color, #2368d9), transparent 18%), transparent 76%),
+    linear-gradient(90deg, var(--player-color, #2368d9), transparent 76%),
     linear-gradient(180deg, rgba(8, 12, 42, 0.08), rgba(5, 8, 31, 0.42)),
     var(--color-menu);
   box-shadow:
@@ -305,8 +305,8 @@ h2 {
   width: 52px;
   aspect-ratio: 1;
   background: #ff5f9d;
-  mask: url("./src/assets/kissmark.png") center / contain no-repeat;
   -webkit-mask: url("./src/assets/kissmark.png") center / contain no-repeat;
+  mask: url("./src/assets/kissmark.png") center / contain no-repeat;
   filter: blur(0.2px) saturate(1.1);
   mix-blend-mode: screen;
   opacity: 0.22;
@@ -334,7 +334,7 @@ h2 {
 }
 
 .player-name span {
-  color: color-mix(in srgb, var(--player-text-color, var(--color-muted)), transparent 18%);
+  color: var(--player-text-color, var(--color-muted));
   font-size: 0.72rem;
   font-weight: 850;
   letter-spacing: 0.08em;
@@ -508,8 +508,8 @@ h2 {
   width: 92px;
   aspect-ratio: 1;
   background: #ff5f9d;
-  mask: url("./src/assets/kissmark.png") center / contain no-repeat;
   -webkit-mask: url("./src/assets/kissmark.png") center / contain no-repeat;
+  mask: url("./src/assets/kissmark.png") center / contain no-repeat;
   filter: blur(0.3px) saturate(1.18);
   mix-blend-mode: screen;
   opacity: 0;
@@ -770,7 +770,7 @@ button:focus-visible {
   border: 1px solid rgba(247, 239, 226, 0.2);
   border-radius: 12px;
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--handoff-color, #d5a94f), transparent 56%), transparent 68%),
+    linear-gradient(135deg, var(--handoff-color, #d5a94f), transparent 68%),
     rgba(247, 239, 226, 0.07);
 }
 
@@ -779,7 +779,7 @@ button:focus-visible {
   padding: 28px 18px 18px;
   display: grid;
   gap: 14px;
-  border-color: color-mix(in srgb, var(--handoff-color, #d5a94f), transparent 48%);
+  border-color: var(--handoff-color, #d5a94f);
   box-shadow:
     inset 0 0 0 1px rgba(255, 248, 239, 0.06),
     0 16px 34px rgba(0, 0, 0, 0.22);
@@ -803,11 +803,11 @@ button:focus-visible {
 }
 
 .handoff-card .label {
-  color: color-mix(in srgb, var(--handoff-text-color, #fff8ef), var(--handoff-color, #d5a94f) 38%);
+  color: var(--handoff-text-color, #fff8ef);
 }
 
 .handoff-card .primary-button {
-  border-color: color-mix(in srgb, var(--handoff-color, #d5a94f), #fff8ef 24%);
+  border-color: rgba(255, 248, 239, 0.42);
   background:
     linear-gradient(180deg, rgba(255, 248, 239, 0.16), rgba(12, 8, 8, 0.12)),
     var(--handoff-color, var(--color-gold));
@@ -815,7 +815,7 @@ button:focus-visible {
 }
 
 .player-action-button {
-  border-color: color-mix(in srgb, var(--private-color, #d5a94f), #fff8ef 24%);
+  border-color: rgba(255, 248, 239, 0.42);
   background:
     linear-gradient(180deg, rgba(255, 248, 239, 0.16), rgba(12, 8, 8, 0.12)),
     var(--private-color, var(--color-gold));
@@ -832,12 +832,12 @@ button:focus-visible {
 }
 
 .handoff-copy {
-  color: color-mix(in srgb, var(--handoff-text-color, var(--color-muted)), transparent 10%);
+  color: var(--handoff-text-color, var(--color-muted));
 }
 
 .private-turn-card {
   padding: 16px;
-  border-color: color-mix(in srgb, var(--private-color, #d5a94f), transparent 48%);
+  border-color: var(--private-color, #d5a94f);
   background:
     linear-gradient(180deg, rgba(255, 248, 239, 0.1), rgba(12, 8, 8, 0.18)),
     var(--private-color, #d5a94f);
@@ -849,11 +849,11 @@ button:focus-visible {
 }
 
 .private-turn-card .label {
-  color: color-mix(in srgb, var(--private-text-color, #fff8ef), var(--private-color, #d5a94f) 38%);
+  color: var(--private-text-color, #fff8ef);
 }
 
 .private-turn-card p {
-  color: color-mix(in srgb, var(--private-text-color, var(--color-muted)), transparent 10%);
+  color: var(--private-text-color, var(--color-muted));
 }
 
 .result-screen {
@@ -861,9 +861,9 @@ button:focus-visible {
   padding: 16px;
   display: grid;
   gap: 12px;
-  border-color: color-mix(in srgb, var(--result-winner-color, #d5a94f), transparent 48%);
+  border-color: var(--result-winner-color, #d5a94f);
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--result-winner-color, #d5a94f), transparent 42%), transparent 68%),
+    linear-gradient(135deg, var(--result-winner-color, #d5a94f), transparent 68%),
     rgba(247, 239, 226, 0.07);
 }
 
@@ -884,7 +884,7 @@ button:focus-visible {
 
 .result-list {
   display: grid;
-  gap: 8px;
+  gap: 12px;
 }
 
 .result-row {
@@ -895,11 +895,123 @@ button:focus-visible {
 
 .result-answer-row {
   grid-template-columns: 30px minmax(0, 1fr) 98px 54px;
-  --result-row-muted: color-mix(in srgb, var(--result-row-text, #fff8ef), transparent 24%);
-  border-color: color-mix(in srgb, var(--result-player-color, #d5a94f), #fff8ef 22%);
+  --result-row-muted: var(--result-row-text, #fff8ef);
+  border-color: rgba(255, 248, 239, 0.42);
   background:
     linear-gradient(180deg, rgba(255, 248, 239, 0.12), rgba(12, 8, 8, 0.16)),
     var(--result-player-color, #d5a94f);
+}
+
+.result-answer-card {
+  position: relative;
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+  border: 1px solid rgba(213, 169, 79, 0.34);
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at 50% 56%, var(--panty-bg-glow), transparent 58%),
+    linear-gradient(180deg, var(--panty-bg-deep), var(--panty-bg-base));
+  box-shadow:
+    inset 0 0 0 1px rgba(12, 8, 8, 0.14),
+    0 12px 28px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.result-answer-card::before {
+  content: "";
+  position: absolute;
+  inset: -18%;
+  background: radial-gradient(circle at 50% 56%, var(--panty-bg-glow), transparent 58%);
+  opacity: 0.72;
+  pointer-events: none;
+  transform: scale(0.94);
+  animation: panty-bg-breathe 4.2s ease-in-out infinite;
+}
+
+.result-answer-card>* {
+  position: relative;
+  z-index: 1;
+}
+
+.result-answer-card.is-winner {
+  padding: 14px;
+  border-color: rgba(213, 169, 79, 0.54);
+}
+
+.result-answer-card-meta {
+  margin: -12px -12px 0;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) 98px 54px;
+  gap: 10px;
+  align-items: center;
+  color: var(--result-player-text-color, var(--color-paper));
+  background: var(--result-player-color, rgba(247, 239, 226, 0.12));
+}
+
+.result-answer-card.is-winner .result-answer-card-meta {
+  margin: -14px -14px 0;
+  padding: 14px;
+}
+
+.result-answer-card-meta .result-rank,
+.result-answer-card-meta .result-player-name,
+.result-answer-card-meta .result-hex,
+.result-answer-card-meta .result-score,
+.result-parent-meta .result-rank,
+.result-parent-meta .result-player-name,
+.result-parent-meta .result-hex {
+  color: currentColor;
+}
+
+.result-answer-card-meta .result-answer-hex,
+.result-parent-meta .result-answer-hex {
+  border-color: currentColor;
+}
+
+.result-answer-card-meta .result-answer-hex::before,
+.result-parent-meta .result-answer-hex::before {
+  border-color: currentColor;
+}
+
+.result-answer-card .result-panty-image {
+  margin: 0 auto;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  cursor: default;
+}
+
+.result-answer-card.is-winner .result-panty-image {
+  width: min(100%, 280px);
+  border-radius: 0;
+  filter: drop-shadow(0 16px 22px rgba(0, 0, 0, 0.3));
+}
+
+.result-answer-card.is-runner-up {
+  gap: 8px;
+}
+
+.result-answer-card .result-player-name {
+  color: var(--result-player-text-color, var(--color-paper));
+}
+
+.result-answer-card.is-runner-up .result-panty-image {
+  width: min(100%, 280px);
+  aspect-ratio: 576 / 232;
+  margin-inline: auto;
+  border-radius: 8px;
+  filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.26));
+}
+
+.result-answer-card.is-runner-up .panty-color-fill,
+.result-answer-card.is-runner-up .panty-image {
+  inset: 50% 0 auto 0;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 576 / 462;
+  transform: translateY(-50%);
 }
 
 .result-parent-card {
@@ -945,10 +1057,14 @@ button:focus-visible {
 }
 
 .result-parent-meta {
+  margin: -14px -14px 0;
+  padding: 14px;
   display: grid;
   grid-template-columns: 30px minmax(0, 1fr) 98px;
   gap: 10px;
   align-items: center;
+  color: var(--result-player-text-color, var(--color-paper));
+  background: var(--result-player-color, rgba(247, 239, 226, 0.12));
 }
 
 .result-rank {
@@ -1003,9 +1119,12 @@ button:focus-visible {
   font-weight: 900;
 }
 
+.result-parent-card .result-player-name {
+  color: var(--result-player-text-color, var(--color-paper));
+}
+
 .result-parent-name-button {
   border: 0;
-  padding: 0;
   background: transparent;
   font: inherit;
   text-align: left;
@@ -1032,7 +1151,7 @@ button:focus-visible {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  border: 1px solid color-mix(in srgb, var(--result-row-text, #fff8ef), transparent 56%);
+  border: 1px solid rgba(255, 248, 239, 0.32);
   border-radius: 999px;
 }
 
@@ -1041,7 +1160,7 @@ button:focus-visible {
   width: 14px;
   aspect-ratio: 1;
   flex: 0 0 auto;
-  border: 1px solid color-mix(in srgb, var(--result-row-text, #fff8ef), transparent 42%);
+  border: 1px solid rgba(255, 248, 239, 0.42);
   border-radius: 50%;
   background: var(--answer-color);
   box-shadow: inset 0 0 0 1px rgba(12, 8, 8, 0.18);
@@ -1272,7 +1391,7 @@ button:focus-visible {
 }
 
 .desire-player-step:not(.desire-result-step-hidden) {
-  border-color: color-mix(in srgb, var(--desire-result-color, #d5a94f), #fff8ef 22%);
+  border-color: rgba(255, 248, 239, 0.42);
   background:
     linear-gradient(180deg, rgba(255, 248, 239, 0.12), rgba(12, 8, 8, 0.16)),
     var(--desire-result-color, #d5a94f);
@@ -1441,7 +1560,7 @@ button:focus-visible {
   display: grid;
   gap: 10px;
   padding: 12px;
-  border: 1px solid color-mix(in srgb, var(--private-color, #d5a94f), transparent 58%);
+  border: 1px solid rgba(255, 248, 239, 0.3);
   border-radius: 12px;
   background:
     linear-gradient(180deg, rgba(255, 248, 239, 0.08), rgba(12, 8, 8, 0.22)),
@@ -1630,10 +1749,13 @@ button:focus-visible {
       #8a542e 9deg 18deg,
       #5a321b 18deg 27deg,
       #9b653a 27deg 36deg) border-box;
+  -webkit-mask:
+    linear-gradient(#000 0 0) padding-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
   mask:
     linear-gradient(#000 0 0) padding-box,
     linear-gradient(#000 0 0);
-  mask-composite: exclude;
   pointer-events: none;
 }
 
@@ -1788,7 +1910,7 @@ button:focus-visible {
 
 .roulette-list small,
 .pair-card small {
-  color: color-mix(in srgb, var(--player-text-color, #fff8ef), transparent 14%);
+  color: var(--player-text-color, #fff8ef);
   font-size: 0.76rem;
   font-weight: 850;
   white-space: nowrap;
@@ -1799,8 +1921,8 @@ button:focus-visible {
   background:
     linear-gradient(90deg, rgba(12, 8, 8, 0.32), rgba(12, 8, 8, 0.32)),
     linear-gradient(90deg,
-      color-mix(in srgb, var(--pair-left), #0c0808 12%),
-      color-mix(in srgb, var(--pair-right), #0c0808 12%));
+      var(--pair-left),
+      var(--pair-right));
 }
 
 .pair-card-same {
@@ -1808,8 +1930,8 @@ button:focus-visible {
   background:
     linear-gradient(90deg, rgba(12, 8, 8, 0.34), rgba(12, 8, 8, 0.34)),
     linear-gradient(90deg,
-      color-mix(in srgb, var(--pair-left), #0c0808 18%),
-      color-mix(in srgb, var(--pair-right), #0c0808 18%));
+      var(--pair-left),
+      var(--pair-right));
 }
 
 .pair-card-leftover {
@@ -1817,8 +1939,8 @@ button:focus-visible {
   background:
     linear-gradient(90deg, rgba(12, 8, 8, 0.34), rgba(12, 8, 8, 0.42)),
     linear-gradient(90deg,
-      color-mix(in srgb, var(--pair-left), #0c0808 16%),
-      color-mix(in srgb, var(--pair-right), #0c0808 42%));
+      var(--pair-left),
+      var(--pair-right));
   opacity: 0.76;
 }
 
@@ -2005,14 +2127,14 @@ button:disabled {
   position: absolute;
   inset: 0;
   background: var(--panty-color);
-  mask-image: var(--panty-mask);
-  mask-position: center;
-  mask-repeat: no-repeat;
-  mask-size: contain;
   -webkit-mask-image: var(--panty-mask);
   -webkit-mask-position: center;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-size: contain;
+  mask-image: var(--panty-mask);
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
 }
 
 .floating-hearts {
