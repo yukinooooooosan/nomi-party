@@ -30,6 +30,7 @@ export const simpleRouletteGame = {
   id: "simple-roulette",
   number: "04",
   title: "シンプルルーレット",
+  playStyle: "pass-phone",
   summary: "参加者の名前だけで、押したら回って1人を選ぶ。",
   players: "2人-",
   minutes: "1分",

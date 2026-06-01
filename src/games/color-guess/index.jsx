@@ -35,6 +35,7 @@ export const colorGuessGame = {
   id: "color-guess",
   number: "01",
   title: "色あて",
+  playStyle: "pass-phone",
   summary: "お題に合う色を直感で作って、近さやズレを楽しむ。",
   players: "2人-",
   minutes: "5分",

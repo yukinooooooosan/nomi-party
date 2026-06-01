@@ -6,6 +6,7 @@ export const desireMatchGame = {
   id: "desire-match",
   number: "02",
   title: "欲望ガチャ",
+  playStyle: "pass-phone",
   summary: "匿名の欲望に、応じてもいい人だけが乗る二重抽選ゲーム。",
   players: "2人-",
   minutes: "8分",

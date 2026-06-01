@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { GameMenu } from "./components/GameMenu.jsx";
 import { PlayerSetup } from "./components/PlayerSetup.jsx";
-import { games } from "./games/registry.js";
+import { PlayStyleMenu } from "./components/PlayStyleMenu.jsx";
+import { games, passPhoneGames, personalPhoneGames, playStyles } from "./games/registry.js";
 import {
   hasReadyPlayers,
   loadPlayers,
@@ -27,57 +28,108 @@ export function App() {
     sessionStorage.setItem(playerStorageKey, JSON.stringify(players));
   }, [players]);
 
+  useEffect(() => {
+    if (route === "menu") {
+      navigateTo("pass-phone-menu");
+    }
+  }, [route]);
+
   const currentGame = useMemo(
     () => games.find((game) => game.id === route) || null,
     [route],
   );
   const readyPlayers = useMemo(() => normalizePlayers(players), [players]);
+  const currentGameNeedsPlayers = currentGame?.playStyle === playStyles.passPhone;
 
   useEffect(() => {
-    if (!route || route === "setup" || route === "menu") {
+    if (route === "setup") {
+      return;
+    }
+
+    if (
+      !route
+      || route === "menu"
+      || route === "pass-phone-menu"
+      || route === "personal-phone-menu"
+    ) {
       setPendingGameId(null);
       return;
     }
 
     if (!currentGame) {
       setPendingGameId(null);
-      navigateTo("setup");
+      navigateTo("");
       return;
     }
 
-    if (!hasReadyPlayers(players)) {
+    if (currentGameNeedsPlayers && !hasReadyPlayers(players)) {
       setPendingGameId(currentGame.id);
+      navigateTo("setup");
     }
-  }, [currentGame, players, route]);
+  }, [currentGame, currentGameNeedsPlayers, players, route]);
 
   function completeSetup(nextPlayers) {
     setPlayers(nextPlayers);
     sessionStorage.setItem(playerStorageKey, JSON.stringify(nextPlayers));
     sessionStorage.setItem(setupCompleteKey, "true");
     saveRoster(nextPlayers);
-    navigateTo(pendingGameId || "menu");
+    navigateTo(pendingGameId || "pass-phone-menu");
   }
 
-  let content = (
-    <PlayerSetup
-      onComplete={completeSetup}
-      pendingGameId={pendingGameId}
-      players={players}
-      setPlayers={setPlayers}
-    />
-  );
+  let content = <PlayStyleMenu />;
 
-  if (route === "menu" && hasReadyPlayers(players)) {
-    content = <GameMenu games={games} players={readyPlayers} />;
+  if (route === "setup") {
+    content = (
+      <PlayerSetup
+        onComplete={completeSetup}
+        pendingGameId={pendingGameId}
+        players={players}
+        setPlayers={setPlayers}
+      />
+    );
   }
 
-  if (currentGame && hasReadyPlayers(players)) {
+  if (route === "pass-phone-menu" && hasReadyPlayers(players)) {
+    content = (
+      <GameMenu
+        games={passPhoneGames}
+        playStyle={playStyles.passPhone}
+        players={readyPlayers}
+      />
+    );
+  }
+
+  if (route === "pass-phone-menu" && !hasReadyPlayers(players)) {
+    content = (
+      <PlayerSetup
+        onComplete={completeSetup}
+        pendingGameId={pendingGameId}
+        players={players}
+        setPlayers={setPlayers}
+      />
+    );
+  }
+
+  if (route === "personal-phone-menu") {
+    content = (
+      <GameMenu
+        games={personalPhoneGames}
+        playStyle={playStyles.personalPhone}
+      />
+    );
+  }
+
+  if (currentGame && (!currentGameNeedsPlayers || hasReadyPlayers(players))) {
     const GameComponent = currentGame.component;
     content = (
       <GameComponent
         game={currentGame}
         players={readyPlayers}
-        backToMenu={() => navigateTo("menu")}
+        backToMenu={() => navigateTo(
+          currentGame.playStyle === playStyles.personalPhone
+            ? "personal-phone-menu"
+            : "pass-phone-menu",
+        )}
       />
     );
   }

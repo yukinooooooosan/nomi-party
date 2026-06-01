@@ -6,7 +6,9 @@ function heatMarks(level) {
   return "●".repeat(level) + "○".repeat(3 - level);
 }
 
-export function GameMenu({ games, players }) {
+export function GameMenu({ games, playStyle, players = [] }) {
+  const isPassPhone = playStyle === "pass-phone";
+
   return (
     <>
       <header className="party-hero">
@@ -40,43 +42,49 @@ export function GameMenu({ games, players }) {
           </g>
         </svg>
         <p className="label">One Night Phone Party</p>
-        <h1 id="party-title">深夜の廻しスマホ</h1>
+        <h1 id="party-title">{isPassPhone ? "深夜の廻しスマホ" : "各自のスマホ遊び"}</h1>
         <p className="party-lead">
-          一台を回すだけ。少し距離を縮めるオトナのパーティゲーム
+          {isPassPhone
+            ? "一台を回すだけ。少し距離を縮めるオトナのパーティゲーム"
+            : "それぞれの画面を小道具にして、現場のノリで進めるパーティーツール"}
         </p>
       </header>
 
-      <section className="player-summary" aria-label="参加メンバー">
-        <div>
-          <p className="label">Players</p>
-          <p>{players.length}人でプレイ</p>
-        </div>
-        <button className="ghost-button" type="button" onClick={() => navigateTo("setup")}>
-          Edit
-        </button>
-        <div className="player-chips">
-          {players.map((player) => (
-            <span
-              key={player.id}
-              style={{
-                "--player-color": getPlayerColor(player),
-                "--player-text-color": getPlayerTextColor(player),
-              }}
-            >
-              {genderLabels[player.gender] || genderLabels.male} {player.name}
-            </span>
-          ))}
-        </div>
-      </section>
+      {isPassPhone && (
+        <section className="player-summary" aria-label="参加メンバー">
+          <div>
+            <p className="label">Players</p>
+            <p>{players.length}人でプレイ</p>
+          </div>
+          <button className="ghost-button" type="button" onClick={() => navigateTo("setup")}>
+            Edit
+          </button>
+          <div className="player-chips">
+            {players.map((player) => (
+              <span
+                key={player.id}
+                style={{
+                  "--player-color": getPlayerColor(player),
+                  "--player-text-color": getPlayerTextColor(player),
+                }}
+              >
+                {genderLabels[player.gender] || genderLabels.male} {player.name}
+              </span>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="menu-board" aria-labelledby="game-list-title">
         <div className="section-heading">
           <p className="label">Tonight&apos;s Menu</p>
-          <h2 id="game-list-title">今宵のゲームを選んでください</h2>
+          <h2 id="game-list-title">
+            {isPassPhone ? "今宵のゲームを選んでください" : "各自スマホのゲームを選んでください"}
+          </h2>
         </div>
 
         <div className="game-menu">
-          {games.map((game) => (
+          {games.length > 0 ? games.map((game) => (
             <a className="game-row" href={`#${game.id}`} key={game.id}>
               <span className="game-number">{game.number}</span>
               <span className="game-main">
@@ -91,14 +99,33 @@ export function GameMenu({ games, players }) {
               </span>
               <span className="game-action">Start</span>
             </a>
-          ))}
+          )) : (
+            <div className="empty-menu" role="status">
+              <p className="label">Coming Soon</p>
+              <p>ここに、各自のスマホで遊ぶゲームを追加していきます。</p>
+            </div>
+          )}
         </div>
       </section>
 
+      <button className="ghost-button mode-back-button" type="button" onClick={() => navigateTo("")}>
+        遊び方を選び直す
+      </button>
+
       <footer className="party-note" aria-label="遊ぶときの約束">
-        <span>パスあり</span>
-        <span>無理強いなし</span>
-        <span>記録しない</span>
+        {isPassPhone ? (
+          <>
+            <span>パスあり</span>
+            <span>無理強いなし</span>
+            <span>記録しない</span>
+          </>
+        ) : (
+          <>
+            <span>各自端末</span>
+            <span>ローカル完結</span>
+            <span>記録しない</span>
+          </>
+        )}
       </footer>
     </>
   );
