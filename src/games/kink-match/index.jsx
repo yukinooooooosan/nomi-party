@@ -288,6 +288,17 @@ function SettingsScreen({
 function AnswerScreen({ answers, onAnswer, onSubmit, player, questions }) {
   const answeredCount = Object.keys(answers).length;
   const canSubmit = answeredCount === questions.length;
+  const questionRefs = useRef([]);
+  const submitButtonRef = useRef(null);
+
+  function answerAndAdvance(questionId, value, index) {
+    onAnswer(questionId, value);
+
+    window.setTimeout(() => {
+      const nextElement = questionRefs.current[index + 1] || submitButtonRef.current;
+      nextElement?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
+  }
 
   return (
     <section
@@ -305,7 +316,13 @@ function AnswerScreen({ answers, onAnswer, onSubmit, player, questions }) {
 
       <div className="kink-question-list">
         {questions.map((question, index) => (
-          <div className="kink-question-card" key={question.id}>
+          <div
+            className="kink-question-card"
+            key={question.id}
+            ref={(element) => {
+              questionRefs.current[index] = element;
+            }}
+          >
             <p className="label">Q{index + 1} / {questions.length}</p>
             <h3>{question.prompt}</h3>
             <div className="kink-choice-row">
@@ -314,7 +331,7 @@ function AnswerScreen({ answers, onAnswer, onSubmit, player, questions }) {
                   active={answers[question.id] === choice.value}
                   key={choice.id}
                   label={choice.label}
-                  onClick={() => onAnswer(question.id, choice.value)}
+                  onClick={() => answerAndAdvance(question.id, choice.value, index)}
                 />
               ))}
             </div>
@@ -325,6 +342,7 @@ function AnswerScreen({ answers, onAnswer, onSubmit, player, questions }) {
       <button
         className="primary-button full-button player-action-button"
         disabled={!canSubmit}
+        ref={submitButtonRef}
         type="button"
         onClick={onSubmit}
       >
