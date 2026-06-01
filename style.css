@@ -1590,14 +1590,16 @@ button:focus-visible {
 
 .kink-choice-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
 }
 
 .kink-choice {
-  min-height: 58px;
-  padding: 10px;
-  line-height: 1.35;
+  min-height: 64px;
+  padding: 8px 6px;
+  font-size: clamp(0.72rem, 2.8vw, 0.92rem);
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
 .kink-card .handoff-name {
@@ -2083,8 +2085,7 @@ button:focus-visible {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .kink-rule-grid,
-  .kink-choice-row {
+  .kink-rule-grid {
     grid-template-columns: 1fr;
   }
 }
