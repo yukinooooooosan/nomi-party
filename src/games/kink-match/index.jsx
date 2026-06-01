@@ -1,9 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { GameShell } from "../../components/GameShell.jsx";
 import { getPlayerColor, getPlayerTextColor } from "../../lib/playerColors.js";
 import {
-  answerValues,
-  buildGreedyMatches,
+  buildMatchingResult,
   buildPairRankings,
   getScoreComment,
   selectQuestions,
@@ -14,17 +13,23 @@ import {
   questionGroups,
 } from "./questions.js";
 
-const questionCountOptions = [10, 20];
+const questionCountOptions = [5, 10, 20];
 const pairRules = [
   { id: "allow-same", label: "同性コミ", summary: "同性ペアも異性ペアも候補にする" },
   { id: "opposite-only", label: "異性のみ", summary: "♂ × ♀ だけを候補にする" },
+];
+const matchingModes = [
+  { id: "greedy-high", label: "高相性優先", summary: "高いペアから順に確定する" },
+  { id: "optimal-high", label: "全体高相性", summary: "合計スコアが最大になるように組む" },
+  { id: "greedy-low", label: "低相性優先", summary: "低いペアから順に確定する" },
+  { id: "optimal-low", label: "全体低相性", summary: "合計スコアが最低になるように組む" },
 ];
 
 export const kinkMatchGame = {
   id: "kink-match",
   number: "03",
   title: "性癖マッチング",
-  summary: "2択の回答から、噛み合うペアを1組ずつ発表する診断ゲーム。",
+  summary: "2択の回答から、噛み合うペアを一覧で発表する診断ゲーム。",
   players: "2人-",
   minutes: "8分",
   heat: 2,
@@ -36,12 +41,12 @@ function KinkMatchGame({ game, backToMenu, players }) {
   const [phase, setPhase] = useState("settings");
   const [questionCount, setQuestionCount] = useState(10);
   const [pairRule, setPairRule] = useState("allow-same");
+  const [matchingMode, setMatchingMode] = useState("greedy-high");
   const [groupMix, setGroupMix] = useState(defaultGroupMix);
   const [selectedQuestions, setSelectedQuestions] = useState([]);
   const [playerIndex, setPlayerIndex] = useState(0);
   const [currentAnswers, setCurrentAnswers] = useState({});
   const [answers, setAnswers] = useState({});
-  const [resultIndex, setResultIndex] = useState(0);
 
   const currentPlayer = players[playerIndex];
   const showHeading = !["answer"].includes(phase);
@@ -55,9 +60,11 @@ function KinkMatchGame({ game, backToMenu, players }) {
       : []
   ), [allAnswered, answers, pairRule, players, selectedQuestions]);
   const matchResult = useMemo(() => (
-    allAnswered ? buildGreedyMatches(rankings, players) : { matches: [], leftovers: [] }
-  ), [allAnswered, players, rankings]);
-  const currentMatch = matchResult.matches[resultIndex];
+    allAnswered
+      ? buildMatchingResult(rankings, players, matchingMode)
+      : { matches: [], leftovers: [] }
+  ), [allAnswered, matchingMode, players, rankings]);
+  const matchingModeLabel = getMatchingMode(matchingMode).label;
   const nextAfterCurrent = players[playerIndex + 1] || null;
 
   function updateGroupMix(groupId, mixId) {
@@ -70,7 +77,6 @@ function KinkMatchGame({ game, backToMenu, players }) {
     setPlayerIndex(0);
     setCurrentAnswers({});
     setAnswers({});
-    setResultIndex(0);
     setPhase("handoff");
   }
 
@@ -102,17 +108,7 @@ function KinkMatchGame({ game, backToMenu, players }) {
   }
 
   function showResults() {
-    setResultIndex(0);
-    setPhase(matchResult.matches.length > 0 ? "result" : "leftovers");
-  }
-
-  function advanceResult() {
-    if (resultIndex + 1 < matchResult.matches.length) {
-      setResultIndex((current) => current + 1);
-      return;
-    }
-
-    setPhase("leftovers");
+    setPhase("result");
   }
 
   function restartGame() {
@@ -121,7 +117,6 @@ function KinkMatchGame({ game, backToMenu, players }) {
     setCurrentAnswers({});
     setAnswers({});
     setSelectedQuestions([]);
-    setResultIndex(0);
   }
 
   return (
@@ -187,23 +182,18 @@ function KinkMatchGame({ game, backToMenu, players }) {
           onAction={showResults}
           title="ここからは全員で見てOK"
         >
-          回答をもとに、上位からペアを確定して1組ずつ発表します。
+          回答をもとに、{matchingModeLabel}でペアを確定して一覧で発表します。
         </NoticeCard>
       )}
 
-      {phase === "result" && currentMatch && (
-        <ResultScreen
-          index={resultIndex}
-          match={currentMatch}
-          onNext={advanceResult}
-          total={matchResult.matches.length}
-        />
-      )}
-
-      {phase === "leftovers" && (
-        <LeftoverScreen
+      {phase === "result" && (
+        <ResultListScreen
+          currentMatchingMode={matchingMode}
           leftovers={matchResult.leftovers}
-          matchedCount={matchResult.matches.length}
+          matchingModeLabel={matchingModeLabel}
+          matchingModes={matchingModes}
+          matches={matchResult.matches}
+          onChangeMatchingMode={setMatchingMode}
           onMenu={backToMenu}
           onRestart={restartGame}
         />
@@ -310,7 +300,7 @@ function AnswerScreen({ answers, onAnswer, onSubmit, player, questions }) {
       <div className="private-turn-card">
         <p className="label">Private Answer</p>
         <h2>{getPlayerCallName(player)}の回答</h2>
-        <p>{answeredCount} / {questions.length} 問回答済み。どちらかを必ず選んでください。</p>
+        <p>{answeredCount} / {questions.length} 問回答済み。4つの中から必ず選んでください。</p>
       </div>
 
       <div className="kink-question-list">
@@ -319,16 +309,14 @@ function AnswerScreen({ answers, onAnswer, onSubmit, player, questions }) {
             <p className="label">Q{index + 1} / {questions.length}</p>
             <h3>{question.prompt}</h3>
             <div className="kink-choice-row">
-              <ChoiceButton
-                active={answers[question.id] === answerValues.left}
-                label={question.left}
-                onClick={() => onAnswer(question.id, answerValues.left)}
-              />
-              <ChoiceButton
-                active={answers[question.id] === answerValues.right}
-                label={question.right}
-                onClick={() => onAnswer(question.id, answerValues.right)}
-              />
+              {question.choices.map((choice) => (
+                <ChoiceButton
+                  active={answers[question.id] === choice.value}
+                  key={choice.id}
+                  label={choice.label}
+                  onClick={() => onAnswer(question.id, choice.value)}
+                />
+              ))}
             </div>
           </div>
         ))}
@@ -358,44 +346,89 @@ function ChoiceButton({ active, label, onClick }) {
   );
 }
 
-function ResultScreen({ index, match, onNext, total }) {
-  const [playerA, playerB] = match.players;
-  const isLast = index + 1 >= total;
+function ResultListScreen({
+  currentMatchingMode,
+  leftovers,
+  matches,
+  matchingModeLabel,
+  matchingModes,
+  onChangeMatchingMode,
+  onMenu,
+  onRestart,
+}) {
+  const [isIntro, setIsIntro] = useState(true);
+  const [animationKey, setAnimationKey] = useState(0);
+  const scrollRef = useRef(null);
+  const introTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    replayIntro();
+    return () => window.clearTimeout(introTimeoutRef.current);
+  }, [currentMatchingMode]);
+
+  function replayIntro() {
+    window.clearTimeout(introTimeoutRef.current);
+    scrollRef.current?.scrollTo({ top: 0 });
+    setIsIntro(true);
+    setAnimationKey((current) => current + 1);
+    introTimeoutRef.current = window.setTimeout(() => setIsIntro(false), 2000);
+  }
+
+  function selectMatchingMode(modeId) {
+    if (modeId === currentMatchingMode) {
+      replayIntro();
+      return;
+    }
+
+    onChangeMatchingMode(modeId);
+  }
 
   return (
     <section className="kink-panel kink-result-panel">
-      <p className="label">Match {index + 1} / {total}</p>
-      <h2>{playerA.name} × {playerB.name}</h2>
-      <div className="kink-score">
-        <strong>{formatPercent(match.percent)}</strong>
-        <span>{getScoreComment(match.percent)}</span>
+      <p className="label">Result</p>
+      <h2>結果一覧</h2>
+      <p>{matchingModeLabel}で{matches.length}組のペアを発表します。</p>
+
+      <div className="kink-result-mode-switch" aria-label="マッチングルールを選択">
+        {matchingModes.map((mode) => (
+          <button
+            className={currentMatchingMode === mode.id ? "is-active" : ""}
+            key={mode.id}
+            type="button"
+            onClick={() => selectMatchingMode(mode.id)}
+          >
+            <strong>{mode.label}</strong>
+            <small>{mode.summary}</small>
+          </button>
+        ))}
       </div>
-      <p>
-        上位からペアを確定し、使われた人を抜いています。
-        この2人は今回の回答ではこのスコアでした。
-      </p>
-      <button className="primary-button full-button" type="button" onClick={onNext}>
-        {isLast ? "余りを見る" : "次のペアを見る"}
-      </button>
-    </section>
-  );
-}
 
-function LeftoverScreen({ leftovers, matchedCount, onMenu, onRestart }) {
-  return (
-    <section className="kink-panel">
-      <p className="label">Finish</p>
-      <h2>結果発表おしまい</h2>
-      <p>{matchedCount}組のペアを発表しました。</p>
+      <div className="kink-result-scroll" ref={scrollRef} tabIndex="0">
+        <div
+          className={`kink-result-list ${isIntro ? "is-intro" : ""}`}
+          key={animationKey}
+        >
+          {matches.length === 0 && (
+            <div className="kink-result-row">
+              <p className="label">No Match</p>
+              <h3>今回はペアが成立しませんでした</h3>
+            </div>
+          )}
 
-      {leftovers.length > 0 && (
-        <div className="kink-leftovers">
-          <span>今回は残念ですが...</span>
-          {leftovers.map((player) => (
-            <strong key={player.id}>{getPlayerCallName(player)}</strong>
+          {matches.map((match, index) => (
+            <ResultRow index={index} key={match.id} match={match} />
           ))}
+
+          {leftovers.length > 0 && (
+            <div className="kink-leftovers">
+              <span>今回は残念ですが...</span>
+              {leftovers.map((player) => (
+                <strong key={player.id}>{getPlayerCallName(player)}</strong>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       <div className="game-controls">
         <button className="primary-button" type="button" onClick={onRestart}>
@@ -406,6 +439,21 @@ function LeftoverScreen({ leftovers, matchedCount, onMenu, onRestart }) {
         </button>
       </div>
     </section>
+  );
+}
+
+function ResultRow({ index, match }) {
+  const [playerA, playerB] = match.players;
+
+  return (
+    <article className="kink-result-row">
+      <p className="label">Match {index + 1}</p>
+      <h3>{playerA.name} × {playerB.name}</h3>
+      <div className="kink-score compact-score">
+        <strong>{formatPercent(match.percent)}</strong>
+        <span>{getScoreComment(match.percent)}</span>
+      </div>
+    </article>
   );
 }
 
@@ -444,6 +492,10 @@ function NoticeCard({ actionLabel, children, eyebrow, onAction, title }) {
 function getPlayerCallName(player) {
   const suffix = player.gender === "female" ? "ちゃん" : "くん";
   return `${player.name}${suffix}`;
+}
+
+function getMatchingMode(modeId) {
+  return matchingModes.find((mode) => mode.id === modeId) || matchingModes[0];
 }
 
 function formatPercent(percent) {

@@ -1,10 +1,5 @@
 import { groupMixOptions } from "./questions.js";
 
-export const answerValues = {
-  left: -1,
-  right: 1,
-};
-
 const groupWeightById = Object.fromEntries(
   groupMixOptions.map((option) => [option.id, option.weight]),
 );
@@ -97,6 +92,30 @@ export function buildPairRankings(players, answers, questions, pairRule) {
 }
 
 export function buildGreedyMatches(pairRankings, players) {
+  return buildRankedMatches(pairRankings, players);
+}
+
+export function buildReverseGreedyMatches(pairRankings, players) {
+  return buildRankedMatches([...pairRankings].reverse(), players);
+}
+
+export function buildMatchingResult(pairRankings, players, matchingMode) {
+  if (matchingMode === "optimal-high") {
+    return buildOptimalMatches(pairRankings, players, "max");
+  }
+
+  if (matchingMode === "greedy-low") {
+    return buildReverseGreedyMatches(pairRankings, players);
+  }
+
+  if (matchingMode === "optimal-low") {
+    return buildOptimalMatches(pairRankings, players, "min");
+  }
+
+  return buildGreedyMatches(pairRankings, players);
+}
+
+function buildRankedMatches(pairRankings, players) {
   const usedPlayerIds = new Set();
   const matches = [];
 
@@ -116,6 +135,86 @@ export function buildGreedyMatches(pairRankings, players) {
     matches,
     leftovers: players.filter((player) => !usedPlayerIds.has(player.id)),
   };
+}
+
+export function buildOptimalMatches(pairRankings, players, goal = "max") {
+  const pairByKey = new Map(pairRankings.map((pair) => [
+    getPairKey(pair.players[0].id, pair.players[1].id),
+    pair,
+  ]));
+  const memo = new Map();
+
+  function solve(remainingPlayerIds) {
+    const key = remainingPlayerIds.join("|");
+    const cached = memo.get(key);
+    if (cached) return cached;
+
+    if (remainingPlayerIds.length < 2) {
+      const result = {
+        matches: [],
+        score: 0,
+        leftoverIds: remainingPlayerIds,
+      };
+      memo.set(key, result);
+      return result;
+    }
+
+    const [playerId, ...restPlayerIds] = remainingPlayerIds;
+    const skipped = solve(restPlayerIds);
+    let best = {
+      ...skipped,
+      leftoverIds: [playerId, ...skipped.leftoverIds],
+    };
+
+    restPlayerIds.forEach((partnerId) => {
+      const pair = pairByKey.get(getPairKey(playerId, partnerId));
+      if (!pair) return;
+
+      const nextRemainingIds = restPlayerIds.filter((id) => id !== partnerId);
+      const next = solve(nextRemainingIds);
+      const candidate = {
+        matches: [pair, ...next.matches],
+        score: pair.score + next.score,
+        leftoverIds: next.leftoverIds,
+      };
+
+      if (isBetterOptimalCandidate(candidate, best, goal)) {
+        best = candidate;
+      }
+    });
+
+    memo.set(key, best);
+    return best;
+  }
+
+  const result = solve(players.map((player) => player.id));
+  const matches = [...result.matches].sort((a, b) => (
+    goal === "min" ? a.score - b.score : b.score - a.score
+  ));
+  const matchedPlayerIds = new Set(matches.flatMap((pair) => (
+    pair.players.map((player) => player.id)
+  )));
+
+  return {
+    matches,
+    leftovers: players.filter((player) => !matchedPlayerIds.has(player.id)),
+  };
+}
+
+function isBetterOptimalCandidate(candidate, currentBest, goal) {
+  if (candidate.matches.length !== currentBest.matches.length) {
+    return candidate.matches.length > currentBest.matches.length;
+  }
+
+  if (goal === "min") {
+    return candidate.score < currentBest.score;
+  }
+
+  return candidate.score > currentBest.score;
+}
+
+function getPairKey(playerAId, playerBId) {
+  return [playerAId, playerBId].sort().join("::");
 }
 
 export function calculateCompatibility(playerA, playerB, answerA, answerB, questions, pairRule) {
