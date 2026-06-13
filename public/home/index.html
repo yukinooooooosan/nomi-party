@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="深夜の廻しスマホの入口ページです。本館からゲーム本体へ入る前に、遊び方とゲーム一覧を確認できます。"
+    >
+    <title>深夜の廻しスマホ | Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;500;700&amp;family=Kaisei+Opti:wght@400&amp;family=Klee+One:wght@400;600&amp;family=Spectral:ital,wght@1,500;1,600;1,700&amp;display=swap"
+      rel="stylesheet"
+    >
+    <style>
+      :root {
+        --color-bg: #05081f;
+        --color-paper: #fff2b8;
+        --color-ink: #fff8df;
+        --color-muted: #c8c0df;
+        --color-line: rgba(255, 235, 150, 0.2);
+        --color-menu: rgba(11, 18, 52, 0.92);
+        --color-menu-strong: rgba(20, 23, 75, 0.96);
+        --color-gold: #f3d45f;
+        --color-red: #c24f7b;
+        --font-base: system-ui, -apple-system, BlinkMacSystemFont, "Hiragino Sans",
+          "Yu Gothic", "YuGothic", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        min-height: 100%;
+        scroll-behavior: smooth;
+        background: var(--color-bg);
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        color: var(--color-ink);
+        font-family: var(--font-base);
+        background:
+          radial-gradient(circle at 12% 8%, rgba(255, 232, 98, 0.85) 0 1px, transparent 2px),
+          radial-gradient(circle at 88% 14%, rgba(255, 232, 98, 0.65) 0 1px, transparent 2px),
+          radial-gradient(circle at 62% 28%, rgba(255, 248, 223, 0.5) 0 1px, transparent 2px),
+          linear-gradient(180deg, rgba(18, 17, 79, 0.72) 0%, rgba(5, 8, 31, 0.98) 42%, #000 100%),
+          repeating-linear-gradient(90deg, rgba(255, 235, 150, 0.032) 0, rgba(255, 235, 150, 0.032) 1px, transparent 1px, transparent 9px),
+          linear-gradient(142deg, #221064 0%, #11194f 38%, #030613 76%, #000 100%);
+        background-attachment: fixed;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .home-shell {
+        width: min(720px, calc(100% - 28px));
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 18px 0 46px;
+      }
+
+      .top-link {
+        min-height: 38px;
+        margin-bottom: 16px;
+        padding: 8px 12px;
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid var(--color-line);
+        border-radius: 999px;
+        background: rgba(247, 239, 226, 0.075);
+        color: var(--color-muted);
+        font-size: 0.86rem;
+        font-weight: 750;
+        text-decoration: none;
+      }
+
+      .hero {
+        min-height: 390px;
+        padding: 42px 24px 28px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(247, 239, 226, 0.24);
+        border-radius: 18px 18px 8px 8px;
+        background:
+          linear-gradient(145deg, rgba(39, 25, 112, 0.82), rgba(5, 8, 31, 0.74) 58%),
+          linear-gradient(45deg, transparent 0 46%, rgba(5, 8, 31, 0.68) 58%, rgba(3, 5, 20, 0.92) 100%),
+          linear-gradient(180deg, rgba(255, 235, 150, 0.14), transparent 38%),
+          var(--color-menu-strong);
+        box-shadow: 0 28px 80px rgba(0, 0, 0, 0.54);
+      }
+
+      .hero::before {
+        content: "";
+        pointer-events: none;
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(0deg, rgba(255, 235, 150, 0.038) 0, rgba(255, 235, 150, 0.038) 1px, transparent 1px, transparent 14px);
+        mix-blend-mode: screen;
+      }
+
+      .phone {
+        position: absolute;
+        top: 28px;
+        right: 28px;
+        width: min(30vw, 150px);
+        aspect-ratio: 0.58;
+        border: 1px solid rgba(255, 248, 223, 0.32);
+        border-radius: 24px;
+        background:
+          linear-gradient(180deg, rgba(255, 248, 223, 0.12), transparent 42%),
+          linear-gradient(145deg, rgba(194, 79, 123, 0.48), rgba(7, 16, 54, 0.95));
+        box-shadow:
+          inset 0 0 0 7px rgba(2, 4, 18, 0.74),
+          0 24px 60px rgba(0, 0, 0, 0.46),
+          0 0 30px rgba(243, 212, 95, 0.16);
+        transform: rotate(7deg);
+      }
+
+      .phone span {
+        position: absolute;
+        left: 16%;
+        right: 16%;
+        min-height: 18px;
+        border-radius: 999px;
+        background: rgba(255, 242, 184, 0.72);
+      }
+
+      .phone span:nth-child(1) {
+        top: 38%;
+      }
+
+      .phone span:nth-child(2) {
+        top: 52%;
+        right: 34%;
+        background: rgba(194, 79, 123, 0.78);
+      }
+
+      .phone span:nth-child(3) {
+        top: 66%;
+        right: 48%;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 1;
+      }
+
+      .label,
+      .kicker {
+        margin: 0 0 10px;
+        color: var(--color-gold);
+        font-size: 0.72rem;
+        font-weight: 850;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 14px;
+        color: var(--color-paper);
+        font-family: "Kaisei Opti", var(--font-base);
+        font-size: clamp(3.1rem, 13vw, 5.7rem);
+        font-weight: 400;
+        line-height: 0.98;
+        letter-spacing: 0;
+        text-shadow: 0 0 20px rgba(243, 212, 95, 0.24), 0 16px 36px rgba(0, 0, 0, 0.52);
+      }
+
+      .lead {
+        max-width: 520px;
+        margin-bottom: 0;
+        color: var(--color-muted);
+        font-family: "Klee One", var(--font-base);
+        font-size: 1rem;
+        font-style: italic;
+        font-weight: 650;
+        line-height: 1.72;
+      }
+
+      .gate,
+      .branch {
+        margin-top: 14px;
+        padding: 18px 16px 16px;
+        border: 1px solid rgba(247, 239, 226, 0.19);
+        border-radius: 8px;
+        background:
+          linear-gradient(90deg, rgba(194, 79, 123, 0.16), transparent 52%),
+          linear-gradient(180deg, rgba(255, 235, 150, 0.05), transparent),
+          var(--color-menu);
+        box-shadow: inset 0 1px 0 rgba(255, 248, 239, 0.06), 0 14px 36px rgba(0, 0, 0, 0.3);
+      }
+
+      .gate {
+        display: grid;
+        gap: 16px;
+      }
+
+      .gate p,
+      .branch p {
+        margin-bottom: 0;
+        color: var(--color-muted);
+        font-family: "Klee One", var(--font-base);
+        font-size: 0.95rem;
+        font-style: italic;
+        font-weight: 600;
+        line-height: 1.62;
+      }
+
+      .primary-button {
+        min-height: 58px;
+        padding: 14px 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(213, 169, 79, 0.72);
+        border-radius: 999px;
+        background: var(--color-gold);
+        color: #20120d;
+        font-weight: 900;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      .map {
+        margin-top: 14px;
+        padding: 18px 0 0;
+      }
+
+      .section-heading {
+        padding: 0 6px 12px;
+      }
+
+      h2 {
+        margin-bottom: 0;
+        font-size: 1.24rem;
+        line-height: 1.35;
+      }
+
+      .route {
+        padding: 0 6px 16px;
+        display: grid;
+        justify-items: center;
+        gap: 8px;
+      }
+
+      .node {
+        width: min(100%, 330px);
+        min-height: 88px;
+        padding: 14px 16px;
+        display: grid;
+        gap: 5px;
+        align-content: center;
+        border: 1px solid rgba(247, 239, 226, 0.2);
+        border-radius: 8px;
+        background: linear-gradient(180deg, rgba(255, 235, 150, 0.06), transparent), rgba(11, 18, 52, 0.78);
+        text-align: center;
+      }
+
+      .node-current {
+        border-color: rgba(243, 212, 95, 0.52);
+        background: linear-gradient(180deg, rgba(243, 212, 95, 0.12), transparent), rgba(20, 23, 75, 0.9);
+      }
+
+      .node strong {
+        color: var(--color-paper);
+        font-size: 1.2rem;
+      }
+
+      .node span:last-child {
+        color: var(--color-muted);
+        font-family: "Klee One", var(--font-base);
+        font-size: 0.9rem;
+        font-style: italic;
+        font-weight: 600;
+      }
+
+      .arrow {
+        color: var(--color-gold);
+        font-size: 1.5rem;
+        font-weight: 900;
+        line-height: 1;
+      }
+
+      .split {
+        width: min(100%, 420px);
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .split a {
+        min-height: 54px;
+        padding: 10px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(243, 212, 95, 0.34);
+        border-radius: 8px;
+        background: linear-gradient(180deg, rgba(243, 212, 95, 0.08), transparent), rgba(255, 248, 223, 0.06);
+        color: var(--color-paper);
+        font-size: 0.9rem;
+        font-weight: 850;
+        line-height: 1.35;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      .branches {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .branch {
+        scroll-margin-top: 18px;
+      }
+
+      h3 {
+        margin-bottom: 6px;
+        color: var(--color-gold);
+        font-family: "Kaisei Decol", var(--font-base);
+        font-size: 1.2rem;
+        font-weight: 400;
+      }
+
+      .game-list {
+        margin: 14px 0 0;
+        padding: 0;
+        display: grid;
+        gap: 8px;
+        list-style: none;
+      }
+
+      .game-list li {
+        min-height: 54px;
+        padding: 9px 10px;
+        display: grid;
+        grid-template-columns: 34px minmax(0, 1fr);
+        gap: 2px 10px;
+        align-items: center;
+        border: 1px solid rgba(255, 248, 239, 0.13);
+        border-radius: 8px;
+        background: rgba(255, 248, 223, 0.055);
+      }
+
+      .game-list span {
+        grid-row: 1 / 3;
+        color: var(--color-gold);
+        font-family: "Spectral", Georgia, serif;
+        font-size: 1.1rem;
+        font-style: italic;
+        font-weight: 850;
+      }
+
+      .game-list strong {
+        min-width: 0;
+        color: var(--color-ink);
+        font-size: 0.95rem;
+        line-height: 1.25;
+      }
+
+      .game-list small {
+        min-width: 0;
+        color: var(--color-muted);
+        font-size: 0.76rem;
+        font-weight: 750;
+      }
+
+      .note {
+        margin: 18px 0 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+      }
+
+      .note span {
+        min-height: 30px;
+        padding: 6px 10px;
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid var(--color-line);
+        border-radius: 999px;
+        color: var(--color-muted);
+        font-size: 0.8rem;
+        font-weight: 800;
+      }
+
+      @media (max-width: 520px) {
+        .home-shell {
+          width: min(100% - 20px, 720px);
+          padding-top: 12px;
+        }
+
+        .hero {
+          min-height: 360px;
+          padding: 28px 18px 24px;
+        }
+
+        .phone {
+          top: 18px;
+          right: 18px;
+          width: 112px;
+          opacity: 0.72;
+        }
+
+        .split,
+        .branches {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="home-shell">
+      <a class="top-link" href="https://yukinooooooosan.cc/">yukino's Folio</a>
+
+      <header class="hero">
+        <div class="phone" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="hero-content">
+          <p class="label">One Night Phone Party</p>
+          <h1>深夜の廻しスマホ</h1>
+          <p class="lead">
+            一台を回すだけ。場の温度を少しだけ上げる、飲み会向けの小さなゲーム集です。
+          </p>
+        </div>
+      </header>
+
+      <section class="gate" aria-labelledby="gate-title">
+        <div>
+          <p class="label">Entrance</p>
+          <h2 id="gate-title">今夜の入口</h2>
+          <p>メンバー登録、ゲーム選択、秘密回答はゲーム本体から始まります。</p>
+        </div>
+        <a class="primary-button" href="/">ゲーム本体を開く</a>
+      </section>
+
+      <section class="map" aria-labelledby="map-title">
+        <div class="section-heading">
+          <p class="label">Route Map</p>
+          <h2 id="map-title">この先の画面</h2>
+        </div>
+
+        <div class="route">
+          <div class="node node-current">
+            <span class="kicker">Now</span>
+            <strong>/home</strong>
+            <span>母艦からの入口</span>
+          </div>
+          <div class="arrow" aria-hidden="true">↓</div>
+          <div class="node">
+            <span class="kicker">Game App</span>
+            <strong>/</strong>
+            <span>遊び方を選ぶ</span>
+          </div>
+          <div class="split" aria-label="遊び方の分岐">
+            <a href="#pass-phone-games">1台で遊ぶ</a>
+            <a href="#personal-phone-games">それぞれのスマホで遊ぶ</a>
+          </div>
+        </div>
+
+        <div class="branches">
+          <article class="branch" id="pass-phone-games">
+            <p class="kicker">Pass Phone</p>
+            <h3>1台で遊ぶ</h3>
+            <p>メンバー設定 → ゲーム一覧</p>
+            <ul class="game-list">
+              <li><span>01</span><strong>色あて</strong><small>直感 / 5分</small></li>
+              <li><span>02</span><strong>欲望ガチャ</strong><small>匿名 / 8分</small></li>
+              <li><span>03</span><strong>性癖マッチング</strong><small>診断 / 8分</small></li>
+              <li><span>04</span><strong>シンプルルーレット</strong><small>抽選 / 1分</small></li>
+            </ul>
+          </article>
+
+          <article class="branch" id="personal-phone-games">
+            <p class="kicker">Personal Phone</p>
+            <h3>それぞれのスマホで遊ぶ</h3>
+            <p>ゲーム一覧</p>
+            <ul class="game-list">
+              <li><span>01</span><strong>マスクを外した君を見たい</strong><small>ローカル / 3分-</small></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <footer class="note" aria-label="遊ぶときの約束">
+        <span>パスあり</span>
+        <span>無理強いなし</span>
+        <span>記録しない</span>
+      </footer>
+    </main>
+  </body>
+</html>

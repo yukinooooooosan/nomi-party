@@ -2,6 +2,7 @@
 
 公開URL: https://nomi-party.yukinooooooosan.cc/
 本館からの入口: https://nomi-party.yukinooooooosan.cc/home
+入口ページ実体: public/home/index.html
 
 ## これはなに？
 
