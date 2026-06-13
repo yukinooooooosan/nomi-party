@@ -1,6 +1,7 @@
 # 深夜の廻しスマホ 取扱説明書
 
 公開URL: https://nomi-party.yukinooooooosan.cc/
+本館からの入口: https://nomi-party.yukinooooooosan.cc/home
 
 ## これはなに？
 
@@ -157,4 +158,3 @@
 - 入力が終わったら画面を伏せ気味にして次の人へ渡す
 - 結果は笑って受け止める
 - 微妙な空気になりそうなら、すぐ次のゲームへ行く
-

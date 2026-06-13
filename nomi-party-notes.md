@@ -5,6 +5,7 @@
 - タイトル: `深夜の廻しスマホ`
 - リポジトリ: `nomi-party`
 - 公開URL: `https://nomi-party.yukinooooooosan.cc/`
+- 本館からの入口URL: `https://nomi-party.yukinooooooosan.cc/home`
 - 公開基盤: Cloudflare Pages
 - ビルド: Vite + React
 - UI基盤: React Aria Components
@@ -957,7 +958,7 @@ function buildGreedyMatches(pairRankings) {
 ## Folioとの関係
 
 Folio本館には、作品カードとして `深夜の廻しスマホ` を置く。
-カードのリンク先は `https://nomi-party.yukinooooooosan.cc/`。
+カードのリンク先は `https://nomi-party.yukinooooooosan.cc/home`。
 
 本館側にはゲーム本体を置かない。
 本館は入口、ゲーム集本体は別リポジトリ `nomi-party` が持つ。

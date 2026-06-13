@@ -24,6 +24,7 @@
 html {
   min-height: 100%;
   background: var(--color-bg);
+  scroll-behavior: smooth;
 }
 
 body {
@@ -113,6 +114,54 @@ button {
     linear-gradient(35deg, transparent 0 62%, rgba(243, 212, 95, 0.08) 62% 100%),
     var(--color-menu-strong);
   box-shadow: var(--shadow);
+}
+
+.home-hero {
+  min-height: 390px;
+  padding-top: 42px;
+}
+
+.home-phone-visual {
+  position: absolute;
+  top: 28px;
+  right: 28px;
+  z-index: 0;
+  width: min(30vw, 150px);
+  aspect-ratio: 0.58;
+  border: 1px solid rgba(255, 248, 223, 0.32);
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 248, 223, 0.12), transparent 42%),
+    linear-gradient(145deg, rgba(194, 79, 123, 0.48), rgba(7, 16, 54, 0.95));
+  box-shadow:
+    inset 0 0 0 7px rgba(2, 4, 18, 0.74),
+    0 24px 60px rgba(0, 0, 0, 0.46),
+    0 0 30px rgba(243, 212, 95, 0.16);
+  transform: rotate(7deg);
+}
+
+.home-phone-screen {
+  position: absolute;
+  inset: 19% 16% 15%;
+  display: grid;
+  gap: 10px;
+  align-content: center;
+}
+
+.home-phone-screen span {
+  min-height: 18px;
+  border-radius: 999px;
+  background: rgba(255, 242, 184, 0.72);
+  box-shadow: 0 0 20px rgba(243, 212, 95, 0.16);
+}
+
+.home-phone-screen span:nth-child(2) {
+  width: 72%;
+  background: rgba(194, 79, 123, 0.78);
+}
+
+.home-phone-screen span:nth-child(3) {
+  width: 52%;
 }
 
 .party-hero::before,
@@ -476,6 +525,216 @@ h2 {
 .play-style-board {
   margin-top: 14px;
   padding: 18px 0 0;
+}
+
+.home-gate {
+  margin-top: 14px;
+  padding: 18px 16px 16px;
+  display: grid;
+  gap: 16px;
+  border: 1px solid rgba(247, 239, 226, 0.19);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(194, 79, 123, 0.16), transparent 52%),
+    linear-gradient(180deg, rgba(255, 235, 150, 0.05), transparent),
+    var(--color-menu);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 239, 0.06),
+    0 14px 36px rgba(0, 0, 0, 0.3);
+}
+
+.home-gate p:not(.label) {
+  margin-bottom: 0;
+  color: var(--color-muted);
+  font-family: "Klee One", var(--font-base);
+  font-size: 0.95rem;
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1.62;
+}
+
+.home-map {
+  margin-top: 14px;
+  padding: 18px 0 0;
+}
+
+.home-route {
+  padding: 0 6px 16px;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.route-node {
+  width: min(100%, 330px);
+  min-height: 88px;
+  padding: 14px 16px;
+  display: grid;
+  gap: 5px;
+  align-content: center;
+  border: 1px solid rgba(247, 239, 226, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 235, 150, 0.06), transparent),
+    rgba(11, 18, 52, 0.78);
+  text-align: center;
+  box-shadow: inset 0 1px 0 rgba(255, 248, 239, 0.06);
+}
+
+.route-node-current {
+  border-color: rgba(243, 212, 95, 0.52);
+  background:
+    linear-gradient(180deg, rgba(243, 212, 95, 0.12), transparent),
+    rgba(20, 23, 75, 0.9);
+}
+
+.route-kicker {
+  color: var(--color-gold);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.route-node strong {
+  color: var(--color-paper);
+  font-size: 1.2rem;
+  line-height: 1.1;
+}
+
+.route-node span:last-child {
+  color: var(--color-muted);
+  font-family: "Klee One", var(--font-base);
+  font-size: 0.9rem;
+  font-style: italic;
+  font-weight: 600;
+}
+
+.route-arrow {
+  color: var(--color-gold);
+  font-size: 1.5rem;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 0 18px rgba(243, 212, 95, 0.34);
+}
+
+.route-split {
+  width: min(100%, 420px);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.route-split button {
+  min-height: 54px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(243, 212, 95, 0.34);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(243, 212, 95, 0.08), transparent),
+    rgba(255, 248, 223, 0.06);
+  color: var(--color-paper);
+  font-size: 0.9rem;
+  font-weight: 850;
+  line-height: 1.35;
+  text-align: center;
+  box-shadow: inset 0 1px 0 rgba(255, 248, 239, 0.06);
+}
+
+.route-split button:hover {
+  border-color: rgba(243, 212, 95, 0.72);
+  background:
+    linear-gradient(180deg, rgba(243, 212, 95, 0.14), transparent),
+    rgba(255, 248, 223, 0.09);
+}
+
+.home-branches {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.home-branch {
+  scroll-margin-top: 18px;
+  padding: 16px;
+  border: 1px solid rgba(247, 239, 226, 0.19);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(67, 58, 172, 0.2), transparent 44%),
+    linear-gradient(180deg, rgba(255, 235, 150, 0.05), transparent),
+    var(--color-menu);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 239, 0.06),
+    0 14px 36px rgba(0, 0, 0, 0.3);
+}
+
+.home-branch-head {
+  display: grid;
+  gap: 6px;
+}
+
+.home-branch h3 {
+  margin: 0;
+  color: var(--color-gold);
+  font-family: "Kaisei Decol", var(--font-base);
+  font-size: 1.2rem;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.home-branch p {
+  margin-bottom: 0;
+  color: var(--color-muted);
+  font-size: 0.84rem;
+  font-weight: 750;
+  line-height: 1.5;
+}
+
+.home-game-list {
+  margin: 14px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  list-style: none;
+}
+
+.home-game-list li {
+  min-height: 54px;
+  padding: 9px 10px;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 2px 10px;
+  align-items: center;
+  border: 1px solid rgba(255, 248, 239, 0.13);
+  border-radius: 8px;
+  background: rgba(255, 248, 223, 0.055);
+}
+
+.home-game-list li span {
+  grid-row: 1 / 3;
+  color: var(--color-gold);
+  font-family: "Spectral", Georgia, serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  font-weight: 850;
+}
+
+.home-game-list li strong {
+  min-width: 0;
+  color: var(--color-ink);
+  font-size: 0.95rem;
+  line-height: 1.25;
+}
+
+.home-game-list li small {
+  min-width: 0;
+  color: var(--color-muted);
+  font-size: 0.76rem;
+  font-weight: 750;
+  line-height: 1.25;
 }
 
 .play-style-menu {
@@ -3056,6 +3315,25 @@ button:disabled {
   .party-hero {
     min-height: 252px;
     padding: 28px 18px 24px;
+  }
+
+  .home-hero {
+    min-height: 360px;
+  }
+
+  .home-phone-visual {
+    top: 18px;
+    right: 18px;
+    width: 112px;
+    opacity: 0.72;
+  }
+
+  .route-split {
+    grid-template-columns: 1fr;
+  }
+
+  .home-branches {
+    grid-template-columns: 1fr;
   }
 
   .setup-hero {

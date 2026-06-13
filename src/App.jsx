@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { GameMenu } from "./components/GameMenu.jsx";
+import { HomeScreen } from "./components/HomeScreen.jsx";
 import { PlayerSetup } from "./components/PlayerSetup.jsx";
 import { PlayStyleMenu } from "./components/PlayStyleMenu.jsx";
 import { games, passPhoneGames, personalPhoneGames, playStyles } from "./games/registry.js";
@@ -17,6 +18,7 @@ export function App() {
   const [route, setRoute] = useState(getHashValue());
   const [players, setPlayers] = useState(loadPlayers);
   const [pendingGameId, setPendingGameId] = useState(null);
+  const isHomePath = normalizePath(window.location.pathname) === "/home";
 
   useEffect(() => {
     const handleHashChange = () => setRoute(getHashValue());
@@ -76,9 +78,9 @@ export function App() {
     navigateTo(pendingGameId || "pass-phone-menu");
   }
 
-  let content = <PlayStyleMenu />;
+  let content = isHomePath ? <HomeScreen /> : <PlayStyleMenu />;
 
-  if (route === "setup") {
+  if (!isHomePath && route === "setup") {
     content = (
       <PlayerSetup
         onComplete={completeSetup}
@@ -89,7 +91,7 @@ export function App() {
     );
   }
 
-  if (route === "pass-phone-menu" && hasReadyPlayers(players)) {
+  if (!isHomePath && route === "pass-phone-menu" && hasReadyPlayers(players)) {
     content = (
       <GameMenu
         games={passPhoneGames}
@@ -99,7 +101,7 @@ export function App() {
     );
   }
 
-  if (route === "pass-phone-menu" && !hasReadyPlayers(players)) {
+  if (!isHomePath && route === "pass-phone-menu" && !hasReadyPlayers(players)) {
     content = (
       <PlayerSetup
         onComplete={completeSetup}
@@ -110,7 +112,7 @@ export function App() {
     );
   }
 
-  if (route === "personal-phone-menu") {
+  if (!isHomePath && route === "personal-phone-menu") {
     content = (
       <GameMenu
         games={personalPhoneGames}
@@ -119,7 +121,7 @@ export function App() {
     );
   }
 
-  if (currentGame && (!currentGameNeedsPlayers || hasReadyPlayers(players))) {
+  if (!isHomePath && currentGame && (!currentGameNeedsPlayers || hasReadyPlayers(players))) {
     const GameComponent = currentGame.component;
     content = (
       <GameComponent
@@ -144,4 +146,8 @@ export function App() {
       </section>
     </main>
   );
+}
+
+function normalizePath(pathname) {
+  return pathname.replace(/\/+$/, "") || "/";
 }
