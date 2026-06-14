@@ -13,6 +13,7 @@ import {
   mixRgbColor,
 } from "./color.js";
 import { PantyPreview, PantyResultImage } from "./PantyPreview.jsx";
+import "./style.css";
 
 const defaultColor = { red: 255, green: 255, blue: 255 };
 const fixedPrompt = "彼女の色を当ててね";

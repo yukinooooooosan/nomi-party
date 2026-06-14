@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { GameShell } from "../../components/GameShell.jsx";
 import { getPlayerColor, getPlayerTextColor } from "../../lib/playerColors.js";
 import { genderLabels } from "../../lib/players.js";
+import "./style.css";
 
 const minimumSpinDurationMs = 4400;
 const spinDurationRangeMs = 1800;

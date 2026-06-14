@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { GameShell } from "../../components/GameShell.jsx";
+import "./style.css";
 
 const tileCount = 20;
 const mosaicMaxLevel = 5;

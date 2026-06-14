@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { GameShell } from "../../components/GameShell.jsx";
 import { getPlayerColor, getPlayerTextColor } from "../../lib/playerColors.js";
+import "./style.css";
 
 export const desireMatchGame = {
   id: "desire-match",

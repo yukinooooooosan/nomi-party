@@ -12,6 +12,7 @@ import {
   groupMixOptions,
   questionGroups,
 } from "./questions.js";
+import "./style.css";
 
 const questionCountOptions = [5, 10, 20];
 const pairRules = [
